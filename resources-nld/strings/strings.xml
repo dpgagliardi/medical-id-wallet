@@ -28,7 +28,7 @@
   <string id="donorYes">Ja</string>
   <string id="donorNo">Nee</string>
   <string id="nationalId">BSN / Zorgpas Nr.</string>
-  <string id="docString">Alternatieve code — vervangt ID in barcode/QR (bijv. verzekeringsnr., startnr., profiel-URL)</string>
+  <string id="docString">Alternatieve code: vervangt ID in barcode/QR (bijv. verzekeringsnr., startnr., profiel-URL)</string>
   <string id="docLabel">Codelabel (bijv. Startnr., Verzekering)</string>
   <string id="barcodeTooLongQr">Code te lang voor QR</string>
 

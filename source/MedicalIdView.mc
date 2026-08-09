@@ -11,8 +11,8 @@ import Toybox.Lang;
 import Toybox.Attention;
 import Toybox.System;
 
-class SafeRunnerView extends WatchUi.View {
-    private var model           as SafeRunnerModel;
+class MedicalIdView extends WatchUi.View {
+    private var model           as MedicalIdModel;
     private var barcodeRenderer as BarcodeRenderer;
 
     private const COLOR_BLACK    = 0x000000;
@@ -26,7 +26,7 @@ class SafeRunnerView extends WatchUi.View {
     //! label on Garmin wearables, so it needs no translation.
     private var showOpenHint as Boolean;
 
-    function initialize(model as SafeRunnerModel, showOpenHint as Boolean) {
+    function initialize(model as MedicalIdModel, showOpenHint as Boolean) {
         View.initialize();
         self.model = model;
         self.showOpenHint = showOpenHint;
@@ -42,7 +42,7 @@ class SafeRunnerView extends WatchUi.View {
         try {
             backlightOn = drawMainScreen(dc);
         } catch (ex) {
-            // Render aborted partway through — avoid leaving a stuck black
+            // Render aborted partway through: avoid leaving a stuck black
             // frame; reset scroll so the next update starts from a known-good state.
             // Deliberately NO requestUpdate() here: if the failure is
             // deterministic (and it would be, since the barcode is part of
@@ -60,7 +60,7 @@ class SafeRunnerView extends WatchUi.View {
         // Only ever request backlight ON when the barcode is visible.
         // Attention.backlight() "always respect[s] the backlight timeout
         // settings on the device" (per the SDK docs), so it turns itself
-        // off naturally — an explicit backlight(false) call was causing a
+        // off naturally: an explicit backlight(false) call was causing a
         // black-frame glitch on some devices (e.g. Forerunner 170) both
         // when scrolling the barcode out of view and when closing the
         // widget via Back.
@@ -106,7 +106,7 @@ class SafeRunnerView extends WatchUi.View {
         var centerX = width / 2;
 
         // Empty state: no data configured yet. Previously the two hint
-        // lines were hardcoded English text, never localized — fixed here,
+        // lines were hardcoded English text, never localized; fixed here,
         // plus a third line suggesting the minimum recommended fields so a
         // first-time user isn't left guessing where to start.
         if (!model.hasData()) {
@@ -142,7 +142,7 @@ class SafeRunnerView extends WatchUi.View {
         var small = Graphics.FONT_SMALL;
         var tinyH = dc.getFontHeight(tiny);
 
-        // First name / last name — on separate lines, since long full names
+        // First name / last name: on separate lines, since long full names
         // (e.g. double surnames) can overflow the screen width on one line
         var firstName = model.getFirstName();
         var lastName  = model.getLastName();
@@ -160,7 +160,7 @@ class SafeRunnerView extends WatchUi.View {
             yPos += 10;
         }
 
-        // Blood type — critical for transfusion decisions, kept visually
+        // Blood type: critical for transfusion decisions, kept visually
         // prominent (red box)
         var bloodType = model.getBloodType();
         if (bloodType != null) {
@@ -181,7 +181,7 @@ class SafeRunnerView extends WatchUi.View {
             yPos += boxH + 12;
         }
 
-        // Age — computed from DOB; responders need age faster than an exact
+        // Age: computed from DOB; responders need age faster than an exact
         // birth date for triage/dosing decisions
         var age = model.getAge();
         if (age != null) {
@@ -195,7 +195,7 @@ class SafeRunnerView extends WatchUi.View {
             yPos += tinyH + 10;
         }
 
-        // National / Health ID — identity/insurance lookup
+        // National / Health ID: identity/insurance lookup
         var nationalId = model.getNationalId();
         if (nationalId != null) {
             dc.setColor(COLOR_GREY, Graphics.COLOR_TRANSPARENT);
@@ -208,7 +208,7 @@ class SafeRunnerView extends WatchUi.View {
             yPos += tinyH + 10;
         }
 
-        // Allergies — must be known before administering anything
+        // Allergies: must be known before administering anything
         var allergies = model.getAllergies();
         if (allergies != null) {
             dc.setColor(COLOR_GREY, Graphics.COLOR_TRANSPARENT);
@@ -221,7 +221,7 @@ class SafeRunnerView extends WatchUi.View {
                                              width * 3 / 4, tiny) + 10;
         }
 
-        // Medications — interaction risk, needed right after allergies
+        // Medications: interaction risk, needed right after allergies
         var medications = model.getMedications();
         if (medications != null) {
             dc.setColor(COLOR_GREY, Graphics.COLOR_TRANSPARENT);
@@ -234,7 +234,7 @@ class SafeRunnerView extends WatchUi.View {
                                              width * 3 / 4, tiny) + 10;
         }
 
-        // Medical conditions — context for symptoms
+        // Medical conditions: context for symptoms
         var cond = model.getConditions();
         if (cond != null) {
             dc.setColor(COLOR_GREY, Graphics.COLOR_TRANSPARENT);
@@ -247,7 +247,7 @@ class SafeRunnerView extends WatchUi.View {
                                              width * 3 / 4, tiny) + 10;
         }
 
-        // Height · Weight — secondary, useful for dosing/imaging
+        // Height · Weight: secondary, useful for dosing/imaging
         var physical = model.getPhysicalInfo();
         if (physical != null) {
             dc.setColor(COLOR_GREY, Graphics.COLOR_TRANSPARENT);
@@ -255,7 +255,7 @@ class SafeRunnerView extends WatchUi.View {
             yPos += tinyH + 10;
         }
 
-        // Emergency contacts — name + relationship shown with the number,
+        // Emergency contacts: name + relationship shown with the number,
         // since a bare phone number is nearly useless to a responder who
         // doesn't know if it's a spouse, parent, or a random contact
         var c1Line = contactDisplayLine(model.getIceContact1Name(), model.getIceContact1Rel(), model.getIceContact1());
@@ -278,7 +278,7 @@ class SafeRunnerView extends WatchUi.View {
             yPos += 10;
         }
 
-        // Organ donor status — secondary
+        // Organ donor status: secondary
         var donor = model.getDonorStatus();
         if (donor != 0) {
             var donorText = donor == 1
@@ -294,7 +294,7 @@ class SafeRunnerView extends WatchUi.View {
             yPos += tinyH + 10;
         }
 
-        // Date of birth — exact date kept for reference, after the computed age
+        // Date of birth: exact date kept for reference, after the computed age
         var dob = model.getDateOfBirth();
         if (dob != null) {
             dc.setColor(COLOR_GREY, Graphics.COLOR_TRANSPARENT);
@@ -307,7 +307,7 @@ class SafeRunnerView extends WatchUi.View {
             yPos += tinyH + 10;
         }
 
-        // Barcode inline — appended after all text fields. Dispatches on the
+        // Barcode inline: appended after all text fields. Dispatches on the
         // user's selected format (None/QR/Code39); both use the same simple
         // National ID / Barcode Override content.
         // The renderer decides visibility itself and skips the (expensive)
@@ -342,7 +342,7 @@ class SafeRunnerView extends WatchUi.View {
         return barcodeVisible;
     }
 
-    //! "Jane Doe (Spouse) +1 555 0101" — a bare phone number tells a
+    //! "Jane Doe (Spouse) +1 555 0101": a bare phone number tells a
     //! responder nothing about who to call or why; name + relationship do.
     private function contactDisplayLine(name as String?, relation as String?,
                                          phone as String?) as String? {
@@ -364,7 +364,7 @@ class SafeRunnerView extends WatchUi.View {
     //! Splits text into the lines that will actually be rendered.
     //! Single source of truth for drawing and for height measurement: these
     //! were two separate implementations, and the measuring one hardcoded
-    //! FONT_XTINY regardless of the font it was given — any divergence
+    //! FONT_XTINY regardless of the font it was given; any divergence
     //! between them silently offset every field below it.
     //! A word wider than maxW is broken character-by-character rather than
     //! drawn past the screen edge: a long unbroken medication or allergen
@@ -431,13 +431,13 @@ class SafeRunnerView extends WatchUi.View {
 
     //! The base view and the pushed view share one model, so the scroll
     //! position the pushed view was left at would otherwise still be applied
-    //! when the user backs out to the base view — which then shows the
+    //! when the user backs out to the base view, which then shows the
     //! middle of the profile behind the "press START" cue instead of the
     //! summary it is meant to be.
     function onShow() as Void {
         if (showOpenHint) { model.setScrollOffset(0); }
     }
-    // No explicit backlight(false) here — Attention.backlight() already
+    // No explicit backlight(false) here: Attention.backlight() already
     // respects the device's own timeout, and forcing it off while the view
     // is closing was the source of a black-frame glitch on some devices.
     function onHide() as Void {}

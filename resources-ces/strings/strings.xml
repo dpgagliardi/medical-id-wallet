@@ -28,7 +28,7 @@
   <string id="donorYes">Ano</string>
   <string id="donorNo">Ne</string>
   <string id="nationalId">Rodné číslo / Průkaz pojištěnce</string>
-  <string id="docString">Alternativní kód — nahrazuje ID v čárovém kódu/QR (např. č. pojištění, č. závodu, URL profilu)</string>
+  <string id="docString">Alternativní kód: nahrazuje ID v čárovém kódu/QR (např. č. pojištění, č. závodu, URL profilu)</string>
   <string id="docLabel">Popisek kódu (např. Startovní č., Pojištění)</string>
   <string id="barcodeTooLongQr">Kód je příliš dlouhý pro QR</string>
 

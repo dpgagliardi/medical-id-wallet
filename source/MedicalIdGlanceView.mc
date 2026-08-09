@@ -15,13 +15,13 @@ import Toybox.Lang;
 //! keeping the glance memory footprint minimal ("ICE" is universal).
 //!
 //! Reads the one property it needs directly instead of sharing
-//! SafeRunnerModel with the main view. Constructing the model runs
-//! loadSettings(), which pulls in every field — including three 512-character
-//! free-text fields (medications, allergies, conditions) — and glance views
+//! MedicalIdModel with the main view. Constructing the model runs
+//! loadSettings(), which pulls in every field, including three 512-character
+//! free-text fields (medications, allergies, conditions), and glance views
 //! run under a much tighter memory budget than the full widget view, so
 //! loading all of that just to read a blood type risked blowing it.
 (:glance)
-class SafeRunnerGlanceView extends WatchUi.GlanceView {
+class MedicalIdGlanceView extends WatchUi.GlanceView {
     private const BLOOD_TYPES = ["", "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
     function initialize() {
@@ -29,7 +29,7 @@ class SafeRunnerGlanceView extends WatchUi.GlanceView {
     }
 
     //! Blood type label, or null when unset/out of range. Mirrors the
-    //! validation SafeRunnerModel does, on this one field only.
+    //! validation MedicalIdModel does, on this one field only.
     private function readBloodType() as String? {
         var raw = null;
         try { raw = Application.Properties.getValue("bloodType"); } catch (ex) { return null; }

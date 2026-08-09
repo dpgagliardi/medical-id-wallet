@@ -28,7 +28,7 @@
   <string id="donorYes">Evet</string>
   <string id="donorNo">Hayır</string>
   <string id="nationalId">TC Kimlik No / SGK No</string>
-  <string id="docString">Alternatif kod — barkod/QR'de kimliğin yerini alır (örn. sigorta no, yarış no, profil URL'si)</string>
+  <string id="docString">Alternatif kod: barkod/QR'de kimliğin yerini alır (örn. sigorta no, yarış no, profil URL'si)</string>
   <string id="docLabel">Kod Etiketi (ör. Yarış No, Sigorta)</string>
   <string id="barcodeTooLongQr">Kod QR için çok uzun</string>
 

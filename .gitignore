@@ -5,7 +5,7 @@ build/
 *.prg.debug.xml
 .gradle/
 
-# Signing keys — never commit
+# Signing keys: never commit
 *.pem
 *.key
 *.p12
@@ -18,7 +18,7 @@ build/
 *.swp
 *~
 
-# Internal working docs — not for the public repo
+# Internal working docs: not for the public repo
 .claude/
 TEST_MATRIX.md
 new_icon_source.png

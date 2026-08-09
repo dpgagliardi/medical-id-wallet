@@ -28,7 +28,7 @@
   <string id="donorYes">Да</string>
   <string id="donorNo">Нет</string>
   <string id="nationalId">СНИЛС / Полис ОМС</string>
-  <string id="docString">Альтернативный код — заменяет ID в штрихкоде/QR (напр. № страховки, № участника, ссылка на профиль)</string>
+  <string id="docString">Альтернативный код: заменяет ID в штрихкоде/QR (напр. № страховки, № участника, ссылка на профиль)</string>
   <string id="docLabel">Метка кода (напр. Номер, Страховка)</string>
   <string id="barcodeTooLongQr">Код слишком длинный для QR</string>
 

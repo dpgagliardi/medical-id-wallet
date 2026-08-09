@@ -28,7 +28,7 @@
   <string id="donorYes">Sì</string>
   <string id="donorNo">No</string>
   <string id="nationalId">Codice Fiscale / Tessera Sanitaria</string>
-  <string id="docString">Codice alternativo — sovrascrive l'ID Nazionale nel barcode/QR (es. n. assicurazione, n. gara, link profilo)</string>
+  <string id="docString">Codice alternativo: sovrascrive l'ID Nazionale nel barcode/QR (es. n. assicurazione, n. gara, link profilo)</string>
   <string id="docLabel">Etichetta Codice (es. Pettorale, Polizza)</string>
   <string id="barcodeTooLongQr">Codice troppo lungo per il QR</string>
 

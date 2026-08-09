@@ -1,6 +1,6 @@
 Your medical info, always with you.
 
-Medical ID Wallet stores your blood type, medications, allergies, medical conditions, and emergency contact details right on your watch — viewable any time, without your phone.
+Medical ID Wallet stores your blood type, medications, allergies, medical conditions, and emergency contact details right on your watch: viewable any time, without your phone.
 
 No phone needed. No internet. Just your wrist.
 

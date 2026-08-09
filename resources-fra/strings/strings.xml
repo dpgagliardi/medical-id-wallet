@@ -28,7 +28,7 @@
   <string id="donorYes">Oui</string>
   <string id="donorNo">Non</string>
   <string id="nationalId">N° Sécurité Sociale / Carte Vitale</string>
-  <string id="docString">Code alternatif — remplace l'ID national dans le code-barres/QR (ex. n° assurance, n° dossard, URL de profil)</string>
+  <string id="docString">Code alternatif: remplace l'ID national dans le code-barres/QR (ex. n° assurance, n° dossard, URL de profil)</string>
   <string id="docLabel">Libellé du code (ex. Dossard, Assurance)</string>
   <string id="barcodeTooLongQr">Code trop long pour le QR</string>
 

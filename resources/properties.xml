@@ -83,7 +83,7 @@
             </settingConfig>
         </setting>
 
-        <!-- Numeric picker instead of free text — unit (cm/in, kg/lb) is
+        <!-- Numeric picker instead of free text: unit (cm/in, kg/lb) is
              applied automatically on-watch based on the unitSystem selection
              above. Range covers both unit systems since the settings
              framework has no way to swap min/max based on another field. -->
@@ -107,7 +107,7 @@
             <settingConfig type="alphaNumeric" maxLength="512" />
         </setting>
 
-        <!-- Date of birth (YYYY-MM-DD) — used by medical responders for age-based dosing -->
+        <!-- Date of birth (YYYY-MM-DD): used by medical responders for age-based dosing -->
         <setting propertyKey="@Properties.dateOfBirth" title="@Strings.dateOfBirth" prompt="@Strings.notFilled">
             <settingConfig type="alphaNumeric" maxLength="10" />
         </setting>
@@ -127,7 +127,7 @@
             <settingConfig type="alphaNumeric" maxLength="32" />
         </setting>
 
-        <!-- Optional barcode override — takes priority over nationalId
+        <!-- Optional barcode override: takes priority over nationalId
              whenever it's set (falls back to nationalId only if empty) -->
         <setting propertyKey="@Properties.docString" title="@Strings.docString" prompt="@Strings.notFilled">
             <settingConfig type="alphaNumeric" maxLength="255" />
@@ -142,7 +142,7 @@
         </setting>
 
         <!-- Barcode format selector: 0=none, 1=QR, 2=Code39 (generic).
-             Code128/PDF417 dropped — low real-world usefulness without a
+             Code128/PDF417 dropped: low real-world usefulness without a
              proper scanner, and neither matched the actual standard needed
              to interoperate with real hospital/DMV scanning systems. -->
         <setting propertyKey="@Properties.docType" title="@Strings.docType">

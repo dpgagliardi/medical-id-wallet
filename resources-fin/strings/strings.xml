@@ -28,7 +28,7 @@
   <string id="donorYes">Kyllä</string>
   <string id="donorNo">Ei</string>
   <string id="nationalId">Henkilötunnus / Kela-kortti</string>
-  <string id="docString">Vaihtoehtoinen koodi — korvaa tunnuksen viivakoodissa/QR:ssa (esim. vakuutusnro, kilpailunro, profiilin URL)</string>
+  <string id="docString">Vaihtoehtoinen koodi: korvaa tunnuksen viivakoodissa/QR:ssa (esim. vakuutusnro, kilpailunro, profiilin URL)</string>
   <string id="docLabel">Koodin nimike (esim. Kilpailunro, Vakuutus)</string>
   <string id="barcodeTooLongQr">Koodi on liian pitkä QR-koodiin</string>
 

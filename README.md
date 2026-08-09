@@ -61,18 +61,56 @@ EN · IT · DE · FR · ES · PT · NL · PL · SV · NO · DA · FI · RU · JA
 - Garmin Connect IQ 3.0+
 - Compatible with 249 Garmin devices (wrist-worn wearables)
 
-## License
-
-GNU General Public License v3.0: see [LICENSE](LICENSE). Any modified version you
-distribute must remain under GPLv3 and its source code must be made available
-to recipients.
-
 ## Build
+
+Needs the [Connect IQ SDK](https://developer.garmin.com/connect-iq/sdk/) and a
+developer key.
 
 ```bash
 SDK="/path/to/connectiq-sdk"
 java -jar "${SDK}/bin/monkeybrains.jar" \
-  -o bin/saferunnericewallet.prg \
+  -o bin/medicalidwallet.prg \
   -f monkey.jungle -y your_developer_key.der \
   -d fr955_sim -l 0
 ```
+
+The checks that run in CI run locally in a second, and need no SDK:
+
+```bash
+python3 .github/scripts/check_resources.py
+```
+
+## Reporting a security problem
+
+Not in a public issue: use the **Security** tab, then **Report a vulnerability**.
+The fields this app holds are medical, so a report stays private until there is
+a fix. What counts as one here, and what does not, is in [SECURITY.md](SECURITY.md).
+
+## Contributing
+
+How to report, propose and build is in [CONTRIBUTING.md](CONTRIBUTING.md). The
+short version: a new user-facing string means all twenty languages, and CI will
+say which ones you missed.
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for the full history.
+
+## Author
+
+Built by **SkapaCraft** ([skapacraft.com](https://skapacraft.com)).
+
+## Trademarks
+
+Not affiliated with, endorsed by or sponsored by Garmin Ltd. Garmin, Connect IQ
+and Garmin Connect are trademarks of Garmin Ltd., named here only to identify
+the platform this software runs on.
+
+## Licence
+
+Copyright (C) 2026 SkapaCraft. GPL-3.0-or-later, see [LICENSE](LICENSE).
+
+Any modified version you distribute must stay under GPLv3, and its source must
+be made available to whoever receives it. For an application whose promise is
+that it never touches the network, a permissive licence would let someone ship
+a build that does, under the same name.

@@ -28,7 +28,7 @@
   <string id="donorYes">Ja</string>
   <string id="donorNo">Nein</string>
   <string id="nationalId">Krankenversicherungs-Nr.</string>
-  <string id="docString">Alternativer Code — ersetzt die ID im Barcode/QR (z.B. Versicherungs-Nr., Startnr., Profil-URL)</string>
+  <string id="docString">Alternativer Code: ersetzt die ID im Barcode/QR (z.B. Versicherungs-Nr., Startnr., Profil-URL)</string>
   <string id="docLabel">Code-Bezeichnung (z. B. Startnr., Versicherung)</string>
   <string id="barcodeTooLongQr">Code zu lang für QR</string>
 

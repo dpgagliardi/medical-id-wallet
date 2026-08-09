@@ -28,7 +28,7 @@
   <string id="donorYes">はい</string>
   <string id="donorNo">いいえ</string>
   <string id="nationalId">マイナンバー / 保険証番号</string>
-  <string id="docString">代替コード — バーコード/QRのIDを上書き（例：保険番号、ゼッケン番号、プロフィールURL）</string>
+  <string id="docString">代替コード: バーコード/QRのIDを上書き（例：保険番号、ゼッケン番号、プロフィールURL）</string>
   <string id="docLabel">コードのラベル（例: ゼッケン番号、保険）</string>
   <string id="barcodeTooLongQr">QRには長すぎるコードです</string>
 

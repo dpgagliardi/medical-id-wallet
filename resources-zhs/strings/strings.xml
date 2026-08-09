@@ -28,7 +28,7 @@
   <string id="donorYes">是</string>
   <string id="donorNo">否</string>
   <string id="nationalId">身份证 / 医保卡号</string>
-  <string id="docString">备用代码 — 在条形码/二维码中替代身份证号（例如：保险号、参赛号、个人档案链接）</string>
+  <string id="docString">备用代码: 在条形码/二维码中替代身份证号（例如：保险号、参赛号、个人档案链接）</string>
   <string id="docLabel">代码标签（例如：参赛号、保险）</string>
   <string id="barcodeTooLongQr">代码过长，无法生成二维码</string>
 

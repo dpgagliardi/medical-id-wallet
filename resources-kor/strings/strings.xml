@@ -28,7 +28,7 @@
   <string id="donorYes">예</string>
   <string id="donorNo">아니오</string>
   <string id="nationalId">주민등록번호 / 건강보험카드</string>
-  <string id="docString">대체 코드 — 바코드/QR의 ID를 대체함 (예: 보험 번호, 경기 번호, 프로필 URL)</string>
+  <string id="docString">대체 코드: 바코드/QR의 ID를 대체함 (예: 보험 번호, 경기 번호, 프로필 URL)</string>
   <string id="docLabel">코드 라벨 (예: 배번호, 보험)</string>
   <string id="barcodeTooLongQr">QR에 비해 코드가 너무 김</string>
 

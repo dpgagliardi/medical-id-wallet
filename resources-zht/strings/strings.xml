@@ -28,7 +28,7 @@
   <string id="donorYes">是</string>
   <string id="donorNo">否</string>
   <string id="nationalId">身分證 / 健保卡號</string>
-  <string id="docString">備用代碼 — 在條形碼/QR碼中替代身份證號（例如：保險號、參賽號、個人檔案連結）</string>
+  <string id="docString">備用代碼: 在條形碼/QR碼中替代身份證號（例如：保險號、參賽號、個人檔案連結）</string>
   <string id="docLabel">代碼標籤（例如：號碼布、保險）</string>
   <string id="barcodeTooLongQr">代碼過長，無法產生 QR</string>
 
