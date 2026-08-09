@@ -28,7 +28,7 @@
   <string id="donorYes">Tak</string>
   <string id="donorNo">Nie</string>
   <string id="nationalId">PESEL / Nr EKUZ</string>
-  <string id="docString">Kod alternatywny — zastępuje ID w kodzie kreskowym/QR (np. nr ubezpieczenia, nr startowy, adres profilu)</string>
+  <string id="docString">Kod alternatywny: zastępuje ID w kodzie kreskowym/QR (np. nr ubezpieczenia, nr startowy, adres profilu)</string>
   <string id="docLabel">Etykieta kodu (np. Numer startowy, Ubezpieczenie)</string>
   <string id="barcodeTooLongQr">Kod za długi na QR</string>
 

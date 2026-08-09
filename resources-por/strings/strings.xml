@@ -28,7 +28,7 @@
   <string id="donorYes">Sim</string>
   <string id="donorNo">Não</string>
   <string id="nationalId">CPF / NIF / Cartão de Saúde</string>
-  <string id="docString">Código alternativo — substitui o ID no código de barras/QR (ex. nº seguro, nº de peito, URL de perfil)</string>
+  <string id="docString">Código alternativo: substitui o ID no código de barras/QR (ex. nº seguro, nº de peito, URL de perfil)</string>
   <string id="docLabel">Rótulo do código (ex. Dorsal, Seguro)</string>
   <string id="barcodeTooLongQr">Código muito longo para QR</string>
 

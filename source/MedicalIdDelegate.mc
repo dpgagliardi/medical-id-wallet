@@ -8,7 +8,7 @@
 import Toybox.WatchUi;
 import Toybox.Lang;
 
-//! Input delegate — single scrollable screen.
+//! Input delegate: single scrollable screen.
 //! DOWN / SWIPE_UP → scroll down (see more)
 //! UP   / SWIPE_DOWN → scroll up
 //! MENU             → reset to top
@@ -19,16 +19,16 @@ import Toybox.Lang;
 //! carousel and the delegate "will never receive either the up/down button
 //! or up/down swipe events" (SDK, Connect IQ Basics > App Types). On devices
 //! without glances (e.g. fr235) that made pressing DOWN page away to the
-//! next widget instead of scrolling — the app appeared to quit. Views pushed
+//! next widget instead of scrolling, so the app appeared to quit. Views pushed
 //! with WatchUi.pushView() carry no such restriction, so the base view hands
 //! off to a pushed copy of itself on SELECT.
-class SafeRunnerDelegate extends WatchUi.BehaviorDelegate {
-    private var model      as SafeRunnerModel;
+class MedicalIdDelegate extends WatchUi.BehaviorDelegate {
+    private var model      as MedicalIdModel;
     //! True only for the delegate attached to the widget's base view, where
     //! up/down are owned by the system and SELECT must push the real view.
     private var isBaseView as Boolean;
 
-    function initialize(model as SafeRunnerModel, isBaseView as Boolean) {
+    function initialize(model as MedicalIdModel, isBaseView as Boolean) {
         BehaviorDelegate.initialize();
         self.model = model;
         self.isBaseView = isBaseView;
@@ -39,8 +39,8 @@ class SafeRunnerDelegate extends WatchUi.BehaviorDelegate {
     function onSelect() as Boolean {
         if (!isBaseView) { return false; }
         model.setScrollOffset(0);
-        WatchUi.pushView(new SafeRunnerView(model, false),
-                         new SafeRunnerDelegate(model, false),
+        WatchUi.pushView(new MedicalIdView(model, false),
+                         new MedicalIdDelegate(model, false),
                          WatchUi.SLIDE_LEFT);
         return true;
     }
@@ -63,7 +63,7 @@ class SafeRunnerDelegate extends WatchUi.BehaviorDelegate {
             WatchUi.requestUpdate();
             return true;
         }
-        // KEY_ESC intentionally not handled here — returning false lets
+        // KEY_ESC intentionally not handled here: returning false lets
         // WatchUi apply its default behavior (close the widget, or pop the
         // pushed view back to the base view).
 

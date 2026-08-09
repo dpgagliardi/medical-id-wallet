@@ -29,7 +29,7 @@
   <string id="donorYes">Yes</string>
   <string id="donorNo">No</string>
   <string id="nationalId">National / Health ID (CF, NHS, SSN…)</string>
-  <string id="docString">Alternate Code — overrides National ID in barcode/QR (e.g. insurance #, race #, profile URL)</string>
+  <string id="docString">Alternate Code: overrides National ID in barcode/QR (e.g. insurance #, race #, profile URL)</string>
   <string id="docLabel">Code Label (e.g. Race #, Insurance)</string>
   <string id="barcodeTooLongQr">Code too long for QR</string>
 

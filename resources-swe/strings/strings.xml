@@ -28,7 +28,7 @@
   <string id="donorYes">Ja</string>
   <string id="donorNo">Nej</string>
   <string id="nationalId">Personnummer / Vårdkort</string>
-  <string id="docString">Alternativ kod — ersätter ID i streckkod/QR (t.ex. försäkringsnr, startnr, profil-URL)</string>
+  <string id="docString">Alternativ kod: ersätter ID i streckkod/QR (t.ex. försäkringsnr, startnr, profil-URL)</string>
   <string id="docLabel">Kodetikett (t.ex. Startnr., Försäkring)</string>
   <string id="barcodeTooLongQr">Koden är för lång för QR</string>
 

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/skapacraft/medical-id-wallet/security/advisories/new
+    about: Report it privately here, never in a public issue.
+  - name: Product page
+    url: https://skapacraft.com/tools/apps/medical-id-wallet/
+    about: What the app does, and how to fill in the fields.

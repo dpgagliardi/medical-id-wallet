@@ -12,7 +12,7 @@ import Toybox.WatchUi;
 
 // Barcode renderer: QR (spec-compliant encoder, versions 1-4, ECC L) and
 // Code 39 (A-Z 0-9 and basic symbols, sufficient for all national IDs).
-// Code128 and PDF417 were dropped — see drawBarcodeAt() for why.
+// Code128 and PDF417 were dropped; see drawBarcodeAt() for why.
 class BarcodeRenderer {
     private const CODE39_CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-. *$/+%";
 
@@ -68,7 +68,7 @@ class BarcodeRenderer {
     // Must stay an integer: element widths are accumulated into the bar X
     // position, and a fractional ratio (2.5 was tried) makes each "wide"
     // element land on a .5 boundary that fillRectangle truncates
-    // inconsistently — the same wide bar renders 2px here and 3px there,
+    // inconsistently: the same wide bar renders 2px here and 3px there,
     // destroying the wide:narrow ratio a Code 39 scanner decodes on.
     // CHAR_UNITS below is derived from this value and must match it.
     private const WIDE_RATIO  = 3;   // wide element = 3 narrow units (spec: 2..3)
@@ -99,7 +99,7 @@ class BarcodeRenderer {
 
     // QR matrix generation (RS error correction, module placement)
     // is expensive and was being redone from scratch on every single
-    // onUpdate() — every scroll keypress, every redraw — with no caching.
+    // onUpdate() (every scroll keypress, every redraw) with no caching.
     // For a larger QR (e.g. a 58-char payload needing version 3, vs. a
     // truncated 32-char one needing version 2) this could run long enough
     // to blow the render/watchdog budget on a MIP device (reported as the
@@ -203,7 +203,7 @@ class BarcodeRenderer {
 
     //! Modules of quiet zone (blank border) on each side. The QR spec
     //! requires a minimum 4-module quiet zone for reliable finder-pattern
-    //! detection by scanners — a fixed pixel margin (regardless of module
+    //! detection by scanners: a fixed pixel margin (regardless of module
     //! size) was previously used instead, which was both too small for
     //! larger modules (scan failures) and added ON TOP of the pre-computed
     //! "safe" circular-display footprint (visual overflow past the safe
@@ -330,13 +330,13 @@ class BarcodeRenderer {
     //! colStart used `-1` (correctly extending into the separator on the
     //! outward side). This meant the separator strip on the INWARD-facing
     //! side (e.g. the row below a top-aligned finder, or the column right
-    //! of a left-aligned finder) was never reserved — data got placed and
+    //! of a left-aligned finder) was never reserved: data got placed and
     //! masked there instead of being kept a clean white separator, which is
     //! exactly what a real ISO/IEC 18004 decoder expects at fixed positions
     //! to detect and align each finder pattern. This silently produced a
     //! structurally QR-looking image with correct-looking finder squares
     //! (confirmed by OpenCV/zbar finding them) that nonetheless failed to
-    //! decode — verified via an independent Python re-implementation cross-
+    //! decode, verified via an independent Python re-implementation cross-
     //! checked against the `qrcode` reference library's module matrix and
     //! zbar decoding.
     private function markFinderArea(modules as Array<Array<Boolean> >, isFn as Array<Array<Boolean> >, n as Number,
@@ -372,11 +372,11 @@ class BarcodeRenderer {
     //! (see that function for the corrected placement). The previous
     //! version under-reserved one column (row 8, col n-8), letting
     //! placeQrData() consume a real data bit into a cell that setFormatBits
-    //! unconditionally overwrites afterward — silently dropping one bit and
+    //! unconditionally overwrites afterward, silently dropping one bit and
     //! shifting every subsequent bit in the zig-zag traversal by one
     //! position, corrupting the entire rest of the payload.
     private function reserveFormatAreas(isFn as Array<Array<Boolean> >, n as Number) as Void {
-        // Column 8 (vertical copy) — rows 0-5, 7, 8, then n-7..n-1, plus the
+        // Column 8 (vertical copy): rows 0-5, 7, 8, then n-7..n-1, plus the
         // fixed dark module at row n-8.
         for (var i = 0; i <= 5; i++) { isFn[i][8] = true; }
         isFn[7][8] = true;
@@ -384,7 +384,7 @@ class BarcodeRenderer {
         for (var i = n - 7; i <= n - 1; i++) { isFn[i][8] = true; }
         isFn[n - 8][8] = true;
 
-        // Row 8 (horizontal copy) — cols 0-5, 7, then n-8..n-1.
+        // Row 8 (horizontal copy): cols 0-5, 7, then n-8..n-1.
         for (var i = 0; i <= 5; i++) { isFn[8][i] = true; }
         isFn[8][7] = true;
         for (var i = n - 8; i <= n - 1; i++) { isFn[8][i] = true; }
@@ -457,7 +457,7 @@ class BarcodeRenderer {
 
     //! BUG FIX: this function previously had row/column swapped for EVERY
     //! format-info bit (verified against the actual working placement logic
-    //! of a real, zbar-decodable QR encoder — our computeFormatBits() value
+    //! of a real, zbar-decodable QR encoder: our computeFormatBits() value
     //! was independently confirmed byte-for-byte correct, but every bit was
     //! being written to modules[8][col] where it needed modules[row][8], and
     //! vice versa). This alone was enough to make every QR we generated
@@ -467,14 +467,14 @@ class BarcodeRenderer {
     //! reimplementation, cross-checked module-by-module against a
     //! zbar-decodable reference QR image, until the diff was zero.
     private function setFormatBits(modules as Array<Array<Boolean> >, n as Number, format as Number) as Void {
-        // "Vertical" copy — column 8, split top (bits 0-7) / bottom (bits 8-14)
+        // "Vertical" copy: column 8, split top (bits 0-7) / bottom (bits 8-14)
         for (var i = 0; i <= 14; i++) {
             var bit = (((format >> i) & 1) == 1);
             if (i < 6) { modules[i][8] = bit; }
             else if (i < 8) { modules[i + 1][8] = bit; }
             else { modules[n - 15 + i][8] = bit; }
         }
-        // "Horizontal" copy — row 8, split right (bits 0-7) / left (bits 8-14)
+        // "Horizontal" copy: row 8, split right (bits 0-7) / left (bits 8-14)
         for (var i = 0; i <= 14; i++) {
             var bit = (((format >> i) & 1) == 1);
             if (i < 8) { modules[8][n - i - 1] = bit; }
@@ -492,7 +492,7 @@ class BarcodeRenderer {
 
         // Bail out BEFORE doing any encoding work if the text is already too
         // long for version 4 in any mode (byte mode's ceiling is ~78 chars,
-        // alphanumeric's is ~114) — previously the full bitstream was built
+        // alphanumeric's is ~114); previously the full bitstream was built
         // first and only checked against capacity afterward, so an
         // unbounded-length input (e.g. a long Barcode Override) could do a
         // lot of avoidable work, or worse, before falling back to text.
@@ -527,7 +527,7 @@ class BarcodeRenderer {
         for (var v = 0; v < sizes.size(); v++) {
             if ((dataCodewordsCap[v] * 8) >= bits.size()) { versionIdx = v; break; }
         }
-        if (versionIdx == -1) { return null; } // text too long for v1-4/ECC L — fall back
+        if (versionIdx == -1) { return null; } // text too long for v1-4/ECC L, fall back
 
         var capacityCodewords = dataCodewordsCap[versionIdx];
         var ecCount = ecCounts[versionIdx];
@@ -666,9 +666,9 @@ class BarcodeRenderer {
         return result;
     }
 
-    //! White panel with large text — used when bars would be sub-pixel wide.
+    //! White panel with large text, used when bars would be sub-pixel wide.
     //! hint: one of HINT_*. "Switch to QR" is only meaningful on the Code 39
-    //! paths — when QR itself is what failed, the user is already using it, so
+    //! paths: when QR itself is what failed, the user is already using it, so
     //! that path gets its own message (or none, when there is nothing
     //! actionable to say).
     private function drawTextFallbackAt(dc as Dc, text as String,
@@ -685,7 +685,7 @@ class BarcodeRenderer {
 
         // Step down through the font sizes until the value fits inside the
         // panel. It was always drawn at FONT_SMALL, so a full-length national
-        // ID ran edge to edge and past the panel — and this path now handles
+        // ID ran edge to edge and past the panel, and this path now handles
         // every barcode that is too dense to be scannable, so it has to stay
         // readable for the longest ID the settings allow (32 characters).
         var font    = Graphics.FONT_SMALL;

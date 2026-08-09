@@ -11,9 +11,9 @@ import Toybox.Time;
 import Toybox.Time.Gregorian;
 
 //! Not (:glance): the glance view reads its single field directly, so this
-//! model — which loads every field, including three 512-character ones —
+//! model, which loads every field, including three 512-character ones,
 //! stays out of the glance memory budget entirely.
-class SafeRunnerModel {
+class MedicalIdModel {
     private const PROP_FIRST_NAME   = "firstName";
     private const PROP_LAST_NAME    = "lastName";
     private const PROP_BLOOD_TYPE   = "bloodType";
@@ -126,7 +126,7 @@ class SafeRunnerModel {
     //! Security fix: earlier versions mirrored every sensitive field (name,
     //! blood type, national ID, allergies, medications, contacts, DOB, donor
     //! status) into Application.Storage on every loadSettings() call, but
-    //! that copy was never read back anywhere — Application.Properties was
+    //! that copy was never read back anywhere: Application.Properties was
     //! always the source of truth. This left an unnecessary, unread second
     //! persistent copy of medical/PII data on-device. This one-time purge
     //! removes any such copy left behind by a prior install; no new code
@@ -177,9 +177,9 @@ class SafeRunnerModel {
     }
 
     //! Date of birth is free-typed text (no native date picker exists in
-    //! the CIQ settings framework — confirmed unavailable earlier). A typo
+    //! the CIQ settings framework, confirmed unavailable earlier). A typo
     //! like "1990/05/14" or "14-05-1990" previously got stored and rendered
-    //! as-is, while getAge() silently returned null for it — a user could
+    //! as-is, while getAge() silently returned null for it, so a user could
     //! easily not notice the age was missing and never realize why. Now a
     //! malformed date is rejected outright (treated as "not filled") rather
     //! than displayed as unreliable-looking text with a silently absent age.
@@ -209,7 +209,7 @@ class SafeRunnerModel {
         return 31;
     }
 
-    //! height/weight are "numeric" (float) settings — accepts Float, Number,
+    //! height/weight are "numeric" (float) settings: accepts Float, Number,
     //! or a numeric String (older cached values before the numeric picker).
     //! 0.0 is the property's required default and is treated as "not set"
     //! (no legitimate height/weight is zero).
@@ -272,7 +272,7 @@ class SafeRunnerModel {
     function getIceContact2Rel()  as String? { return iceContact2Rel; }
 
     //! Appends the unit chosen via the "unitSystem" setting (cm/kg for
-    //! Metric, in/lb for Imperial) — the settings page runs on the phone and
+    //! Metric, in/lb for Imperial): the settings page runs on the phone and
     //! cannot read the watch's own unit setting at render time, so the user
     //! picks explicitly instead.
     private function heightWithUnit() as String? {
@@ -297,7 +297,7 @@ class SafeRunnerModel {
     }
 
     //! BUG FIX: docString ("Barcode override") was being used as a
-    //! fallback ONLY when nationalId was empty — the opposite of what
+    //! fallback ONLY when nationalId was empty, the opposite of what
     //! "override" means (it should replace the default when set). Now
     //! docString wins whenever it's non-empty, falling back to nationalId
     //! only when no override is configured.
@@ -313,7 +313,7 @@ class SafeRunnerModel {
     //! medications, height, weight and docString, so a user who filled in
     //! only their medications (or only height/weight, or only the alternate
     //! barcode code) got the "no ICE data configured" screen and their data
-    //! was never displayed at all — drawMainScreen() returns early on false.
+    //! was never displayed at all: drawMainScreen() returns early on false.
     function hasData() as Boolean {
         if (firstName   != null) { return true; }
         if (lastName    != null) { return true; }

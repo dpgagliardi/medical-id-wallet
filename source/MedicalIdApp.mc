@@ -10,29 +10,29 @@ import Toybox.WatchUi;
 import Toybox.Lang;
 import Toybox.System;
 
-//! SafeRunner ICE Wallet main application class.
+//! Medical ID Wallet main application class.
 //! Annotated (:glance) so the app can run in the glance carousel on modern
 //! devices (fr165/255/265/955/965 and later); on API level 4.0.0+ a widget
 //! without a glance view would not appear in the glance list at all.
 (:glance)
-class SafeRunnerApp extends Application.AppBase {
-    private var model as SafeRunnerModel?;
+class MedicalIdApp extends Application.AppBase {
+    private var model as MedicalIdModel?;
 
     function initialize() {
         AppBase.initialize();
     }
 
     //! Lazily create the shared data model
-    private function getModel() as SafeRunnerModel {
+    private function getModel() as MedicalIdModel {
         if (model == null) {
-            model = new SafeRunnerModel();
+            model = new MedicalIdModel();
         }
-        return model as SafeRunnerModel;
+        return model as MedicalIdModel;
     }
 
     //! On a glance-capable device the widget is launched from the glance
     //! list, and the SDK states the base view then "don't have the input
-    //! restrictions regularly applied" — so scrolling works immediately and
+    //! restrictions regularly applied", so scrolling works immediately and
     //! the initial view is the interactive one. Where glances don't exist
     //! (fr235 and other pre-3.1.0 devices) the widget sits in the carousel,
     //! up/down belong to the system, and the initial view must act as a base
@@ -40,7 +40,7 @@ class SafeRunnerApp extends Application.AppBase {
     function getInitialView() as [Views] or [Views, InputDelegates] {
         var m = getModel();
         var restricted = isBaseViewInputRestricted();
-        return [new SafeRunnerView(m, restricted), new SafeRunnerDelegate(m, restricted)];
+        return [new MedicalIdView(m, restricted), new MedicalIdDelegate(m, restricted)];
     }
 
     private function isBaseViewInputRestricted() as Boolean {
@@ -50,18 +50,18 @@ class SafeRunnerApp extends Application.AppBase {
         return !(enabled == true);
     }
 
-    //! The glance builds nothing beyond its own view — it reads the single
+    //! The glance builds nothing beyond its own view: it reads the single
     //! property it displays itself, so the full model (and the large
     //! free-text fields it loads) never enters the glance memory budget.
     (:glance)
     function getGlanceView() as [GlanceView] or [GlanceView, GlanceViewDelegate] or Null {
-        return [new SafeRunnerGlanceView()];
+        return [new MedicalIdGlanceView()];
     }
 
     //! Settings changed from Garmin Connect Mobile: reload and redraw
     function onSettingsChanged() as Void {
         if (model != null) {
-            (model as SafeRunnerModel).loadSettings();
+            (model as MedicalIdModel).loadSettings();
         }
         WatchUi.requestUpdate();
     }

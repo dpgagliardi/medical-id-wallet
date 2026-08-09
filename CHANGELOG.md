@@ -1,6 +1,49 @@
 # Changelog
 
-## [1.1.0] - 2026-07-27
+All notable changes to Medical ID Wallet are documented here.
+The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and the project uses [semantic versioning](https://semver.org/). The version
+here is the one in `manifest.xml`, which is what the Connect IQ Store publishes.
+
+Versions 1.0.1 and 1.0.2 were store iterations made before this repository was
+published, so their history starts at the 1.0.2 entry below.
+
+## [Unreleased]
+
+### Changed
+- The application classes are named after the app. They still carried
+  `SafeRunner`, the name the project had before it became Medical ID Wallet,
+  and so did the build command in the README. Renamed to `MedicalId*`, which is
+  internal only: the application id, the settings keys and the stored data are
+  untouched, and an existing installation upgrades without losing anything.
+
+### Added
+- `SECURITY.md`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, and issue and pull
+  request templates.
+- Continuous integration on every push: the resource XML is checked for
+  well-formedness, every string id used in the source is checked to exist in
+  every one of the 20 languages, and the version in `manifest.xml` is checked
+  against the top entry of this file. That last check exists because it is the
+  one that failed here, silently, twice.
+- Dependabot for the CI actions.
+
+## [1.0.3] - 2026-08-02
+
+### Fixed
+- **Unusable on pre-glance devices** such as the Forerunner 235. Two separate
+  faults, both below API 3.1.0: `Application.Properties` and
+  `Application.Storage` do not exist there, and the resulting symbol resolution
+  error bypassed the existing try/catch, so the app crashed while loading
+  settings. Scrolling then appeared to quit the app, because on a widget's base
+  view the system owns the up and down inputs; the base view now shows a
+  localized "press START" cue and hands off to a pushed copy of itself.
+- The read-only About line in the settings still advertised a version the
+  manifest was not at.
+- The README claimed nothing is sent to Garmin. The fields are entered in
+  Garmin Connect Mobile and handled by Garmin's own software under Garmin's
+  privacy policy, which is not ours to promise.
+
+## [1.0.2] - 2026-07-31
 
 ### Added
 - **Code label**: an optional caption above the barcode/QR panel, so it is clear whether the code is a race bib, an insurance number or a link to an online health profile. The alternate code field already accepted URLs, and this makes that usable in practice, and the field description now mentions it (all 20 languages).
@@ -19,7 +62,7 @@
 
 ## [1.0.0] - 2026-07-26: First public release
 
-**SafeRunner ICE Wallet** by SkapaCraft: emergency medical information (ICE) stored directly on your Garmin watch.
+**Medical ID Wallet** by SkapaCraft: emergency medical information (ICE) stored directly on your Garmin watch.
 
 ### Features
 - ICE info screen: blood type, name, age/date of birth, height/weight, national ID, emergency contacts (name + relationship + phone), medications, allergies, medical conditions, organ donor status

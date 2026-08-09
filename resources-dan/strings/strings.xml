@@ -28,7 +28,7 @@
   <string id="donorYes">Ja</string>
   <string id="donorNo">Nej</string>
   <string id="nationalId">CPR-nummer / Sundhedskort</string>
-  <string id="docString">Alternativ kode — erstatter ID i stregkode/QR (f.eks. forsikrings-nr., startnr., profil-URL)</string>
+  <string id="docString">Alternativ kode: erstatter ID i stregkode/QR (f.eks. forsikrings-nr., startnr., profil-URL)</string>
   <string id="docLabel">Kodeetiket (f.eks. Startnr., Forsikring)</string>
   <string id="barcodeTooLongQr">Koden er for lang til QR</string>
 

@@ -28,7 +28,7 @@
   <string id="donorYes">Igen</string>
   <string id="donorNo">Nem</string>
   <string id="nationalId">TAJ-szám / Személyi szám</string>
-  <string id="docString">Alternatív kód — felülírja az azonosítót a vonalkódban/QR-ben (pl. biztosítási szám, rajtszám, profil URL)</string>
+  <string id="docString">Alternatív kód: felülírja az azonosítót a vonalkódban/QR-ben (pl. biztosítási szám, rajtszám, profil URL)</string>
   <string id="docLabel">Kód címkéje (pl. Rajtszám, Biztosítás)</string>
   <string id="barcodeTooLongQr">A kód túl hosszú a QR-hez</string>
 

@@ -28,7 +28,7 @@
   <string id="donorYes">Sí</string>
   <string id="donorNo">No</string>
   <string id="nationalId">DNI / NIE / N° Seg. Social</string>
-  <string id="docString">Código alternativo — sustituye el ID en el código de barras/QR (ej. nº seguro, nº dorsal, URL de perfil)</string>
+  <string id="docString">Código alternativo: sustituye el ID en el código de barras/QR (ej. nº seguro, nº dorsal, URL de perfil)</string>
   <string id="docLabel">Etiqueta del código (ej. Dorsal, Seguro)</string>
   <string id="barcodeTooLongQr">Código demasiado largo para QR</string>
 
