@@ -11,9 +11,12 @@ everything the compiler would not have caught anyway:
 1. Every resource XML parses. A stray ampersand in one translation breaks the
    build for one language only, which is easy to miss locally.
 2. Every string id the code asks for exists in the default language, and every
-   translation carries exactly the same set of ids. A missing id in one of the
-   twenty languages shows the raw key on the watch of whoever runs that locale,
-   and there is no way to notice that from a simulator running in English.
+   translation carries the same set of ids, minus the ones deliberately left
+   untranslated. A string forgotten in one locale falls back to English on the
+   watch of whoever runs it, and there is no way to notice that from a simulator
+   running in English. Ids that are meant to stay in the default language go in
+   `.github/untranslated.txt`, so "not translated yet" and "not translated on
+   purpose" stay distinguishable.
 3. The version in manifest.xml matches the newest released entry in
    CHANGELOG.md. This one is here because it is what actually went wrong: the
    two drifted apart twice without anything complaining.
@@ -28,6 +31,17 @@ import sys
 import xml.etree.ElementTree as ET
 
 FAILURES: list[str] = []
+
+# Ids a translation is allowed to omit, one per line, blank lines and # ignored.
+UNTRANSLATED_FILE = ".github/untranslated.txt"
+
+
+def read_untranslated() -> set[str]:
+    if not os.path.exists(UNTRANSLATED_FILE):
+        return set()
+    with open(UNTRANSLATED_FILE, encoding="utf-8") as handle:
+        lines = (line.split("#", 1)[0].strip() for line in handle)
+        return {line for line in lines if line}
 
 
 def fail(message: str) -> None:
@@ -82,19 +96,29 @@ def check_strings() -> None:
     else:
         ok(f"{len(referenced)} referenced string ids all defined")
 
+    untranslated = read_untranslated()
+    unknown = sorted(untranslated - defined)
+    if unknown:
+        fail(f"{UNTRANSLATED_FILE} lists ids that do not exist: {', '.join(unknown)}")
+
+    expected = defined - untranslated
     translations = sorted(
         p for p in glob.glob("resources-*/strings/strings.xml") if p != default
     )
+    clean = True
     for path in translations:
         ids = string_ids(path)
-        absent = sorted(defined - ids)
+        absent = sorted(expected - ids)
         extra = sorted(ids - defined)
         if absent:
             fail(f"{path} is missing: {', '.join(absent)}")
+            clean = False
         if extra:
             fail(f"{path} defines ids the default language does not: {', '.join(extra)}")
-    if translations and not any(t in f for f in FAILURES for t in translations):
-        ok(f"{len(translations)} translations carry all {len(defined)} ids")
+            clean = False
+    if translations and clean:
+        note = f" ({len(untranslated)} left to the default on purpose)" if untranslated else ""
+        ok(f"{len(translations)} translations carry all {len(expected)} ids{note}")
 
 
 def check_version() -> None:

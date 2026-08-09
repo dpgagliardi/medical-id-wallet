@@ -1,0 +1,5 @@
+# String ids a translation is allowed to omit, so that a string forgotten in one
+# language stays distinguishable from one left in English on purpose.
+# Checked by .github/scripts/check_resources.py.
+
+# Nothing here: all twenty languages define every id.
