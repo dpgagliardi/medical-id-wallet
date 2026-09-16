@@ -51,5 +51,4 @@
   <string id="docTypeGeneric">Code 39 (pouze krátké kódy)</string>
   <string id="barcodeTooLong">Příliš dlouhé pro čárky - použijte QR</string>
   <string id="pressStart">Stiskněte START</string>
-  <string id="appInfoLabel">O aplikaci</string>
 </strings>
