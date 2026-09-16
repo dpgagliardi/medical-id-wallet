@@ -7,6 +7,7 @@
 
 import Toybox.WatchUi;
 import Toybox.Lang;
+import Toybox.System;
 
 //! Input delegate: single scrollable screen.
 //! DOWN / SWIPE_UP → scroll down (see more)
@@ -34,6 +35,15 @@ class MedicalIdDelegate extends WatchUi.BehaviorDelegate {
         self.isBaseView = isBaseView;
     }
 
+    //! A fixed pixel step meant a wearer with a lot of fields filled in on a
+    //! tall screen (e.g. Venu 4) needed 5-6 swipes to reach the bottom, since
+    //! each one covered the same distance regardless of screen size. Scaling
+    //! to screen height keeps a swipe's coverage proportional across the
+    //! wide range of Garmin displays (fr235 ~215px tall vs Venu 4 ~454px).
+    private function scrollStep() as Number {
+        return (System.getDeviceSettings().screenHeight * 0.45).toNumber();
+    }
+
     //! START/ENTER on the base view opens the scrollable view. Returning
     //! false elsewhere leaves the system default behavior untouched.
     function onSelect() as Boolean {
@@ -49,12 +59,12 @@ class MedicalIdDelegate extends WatchUi.BehaviorDelegate {
         var key = keyEvent.getKey();
 
         if (key == WatchUi.KEY_DOWN) {
-            model.scrollUp();
+            model.scrollUp(scrollStep());
             WatchUi.requestUpdate();
             return true;
         }
         if (key == WatchUi.KEY_UP) {
-            model.scrollDown();
+            model.scrollDown(scrollStep());
             WatchUi.requestUpdate();
             return true;
         }
@@ -74,12 +84,12 @@ class MedicalIdDelegate extends WatchUi.BehaviorDelegate {
         var direction = swipeEvent.getDirection();
 
         if (direction == WatchUi.SWIPE_UP) {
-            model.scrollUp();
+            model.scrollUp(scrollStep());
             WatchUi.requestUpdate();
             return true;
         }
         if (direction == WatchUi.SWIPE_DOWN) {
-            model.scrollDown();
+            model.scrollDown(scrollStep());
             WatchUi.requestUpdate();
             return true;
         }
