@@ -72,12 +72,12 @@ class MedicalIdModel {
     function getScrollOffset() as Number { return scrollOffset; }
     function setScrollOffset(offset as Number) as Void { scrollOffset = offset; }
     function setMaxScroll(v as Number) as Void { maxScroll = v > 0 ? v : 0; }
-    function scrollUp() as Void {
-        var next = scrollOffset + 50;
+    function scrollUp(step as Number) as Void {
+        var next = scrollOffset + step;
         scrollOffset = next <= maxScroll ? next : maxScroll;
     }
-    function scrollDown() as Void {
-        var next = scrollOffset - 50;
+    function scrollDown(step as Number) as Void {
+        var next = scrollOffset - step;
         scrollOffset = next >= 0 ? next : 0;
     }
 

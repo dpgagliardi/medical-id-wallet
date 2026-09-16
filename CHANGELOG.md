@@ -10,6 +10,12 @@ published, so their history starts at the 1.0.2 entry below.
 
 ## [Unreleased]
 
+### Fixed
+- Scrolling advanced by a fixed 50px per swipe or button press regardless of
+  screen size, so a profile with most fields filled in needed 5-6 swipes to
+  reach the bottom on taller screens (reported on a Venu 4 - 45mm). The step
+  now scales with the device's screen height instead.
+
 ### Changed
 - The application classes are named after the app. They still carried
   `SafeRunner`, the name the project had before it became Medical ID Wallet,
