@@ -22,7 +22,6 @@
         <property id="docString"   type="string"></property>
         <property id="docLabel"    type="string"></property>
         <property id="docType"     type="number">0</property>
-        <property id="appInfo"     type="string">v1.0.3 · SkapaCraft · skapacraft.com</property>
     </properties>
 
     <settings>
@@ -151,13 +150,6 @@
                 <listEntry value="1">@Strings.docTypeQR</listEntry>
                 <listEntry value="2">@Strings.docTypeGeneric</listEntry>
             </settingConfig>
-        </setting>
-
-        <!-- Read-only "About" footer: app version, author, website. Keep the
-             version portion in sync with manifest.xml's version whenever
-             either is bumped. -->
-        <setting propertyKey="@Properties.appInfo" title="@Strings.appInfoLabel">
-            <settingConfig type="alphaNumeric" maxLength="255" readonly="true" />
         </setting>
     </settings>
 </resources>

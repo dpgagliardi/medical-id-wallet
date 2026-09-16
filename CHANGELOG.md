@@ -10,6 +10,12 @@ published, so their history starts at the 1.0.2 entry below.
 
 ## [Unreleased]
 
+### Removed
+- The read-only "About" entry from the settings screen (app version, author,
+  website). It cluttered the data-entry flow without giving the wearer
+  anything actionable; the same info is already in the Connect IQ Store
+  listing and the README.
+
 ### Fixed
 - Scrolling advanced by a fixed 50px per swipe or button press regardless of
   screen size, so a profile with most fields filled in needed 5-6 swipes to

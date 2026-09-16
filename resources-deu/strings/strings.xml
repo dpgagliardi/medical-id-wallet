@@ -51,5 +51,4 @@
   <string id="docTypeGeneric">Code 39 (nur kurze Codes)</string>
   <string id="barcodeTooLong">Zu lang für Balken - QR nutzen</string>
   <string id="pressStart">START drücken</string>
-  <string id="appInfoLabel">Über die App</string>
 </strings>
