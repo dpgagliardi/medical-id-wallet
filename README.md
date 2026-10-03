@@ -2,7 +2,9 @@
 
 A Garmin Connect IQ widget that stores your medical ID information (blood type, allergies, conditions, medications, emergency contacts) directly on your watch, viewable at any time without your phone.
 
-**Author:** [SkapaCraft](https://skapacraft.com)
+**Author:** [dpgagliardi](https://github.com/dpgagliardi)
+
+**[Get it on the Connect IQ Store](https://apps.garmin.com/apps/e72b255d-4447-4834-8b2f-5f7e2b431387)** · **[Privacy policy](PRIVACY.md)** · **[Changelog](CHANGELOG.md)**
 
 ---
 
@@ -32,7 +34,7 @@ Open **Garmin Connect Mobile** → your device → **Widget Settings** → Medic
 
 ## Privacy
 
-**100% offline. Zero network requests.** Medical ID Wallet never collects, transmits, or shares any of your information: nothing is sent to SkapaCraft or any third party, and the app never touches the network.
+**100% offline. Zero network requests.** Medical ID Wallet never collects, transmits, or shares any of your information: nothing is sent to me or to any third party, and the app never touches the network.
 
 One honest caveat: you enter these fields in Garmin Connect Mobile, so the values are handled by Garmin's own apps and services on their way to the watch, under [Garmin's privacy policy](https://www.garmin.com/en-US/privacy/global/policy/) rather than ours. We can't see that and don't control it. Every field is optional, so leave blank anything you'd rather Garmin not hold.
 
@@ -100,7 +102,12 @@ See [CHANGELOG.md](CHANGELOG.md) for the full history.
 
 ## Author
 
-Built by **SkapaCraft** ([skapacraft.com](https://skapacraft.com)).
+Built and maintained by [dpgagliardi](https://github.com/dpgagliardi) as a personal
+project, in spare time.
+
+- **Bugs and suggestions:** open an [issue](https://github.com/dpgagliardi/medical-id-wallet/issues).
+- **Security problems:** privately, as described in [Reporting a security problem](#reporting-a-security-problem).
+- **Anything else:** skapacraftlabs@gmail.com
 
 ## Trademarks
 
@@ -110,7 +117,7 @@ the platform this software runs on.
 
 ## Licence
 
-Copyright (C) 2026 SkapaCraft. GPL-3.0-or-later, see [LICENSE](LICENSE).
+Copyright (C) 2026 Daniele Gagliardi. GPL-3.0-or-later, see [LICENSE](LICENSE).
 
 Any modified version you distribute must stay under GPLv3, and its source must
 be made available to whoever receives it. For an application whose promise is

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright (C) 2026 SkapaCraft <https://skapacraft.com>
+# Copyright (C) 2026 Daniele Gagliardi
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 """Checks that need no Connect IQ SDK.
