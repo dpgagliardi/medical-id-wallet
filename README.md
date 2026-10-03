@@ -2,7 +2,7 @@
 
 A Garmin Connect IQ widget that stores your medical ID information (blood type, allergies, conditions, medications, emergency contacts) directly on your watch, viewable at any time without your phone.
 
-**Author:** Daniele Gagliardi
+**Author:** [dpgagliardi](https://github.com/dpgagliardi)
 
 **[Get it on the Connect IQ Store](https://apps.garmin.com/apps/e72b255d-4447-4834-8b2f-5f7e2b431387)** · **[Privacy policy](PRIVACY.md)** · **[Changelog](CHANGELOG.md)**
 
@@ -102,7 +102,7 @@ See [CHANGELOG.md](CHANGELOG.md) for the full history.
 
 ## Author
 
-Built and maintained by **Daniele Gagliardi** as a personal project. It started under the SkapaCraft name, which has since been retired.
+Built and maintained by **[dpgagliardi](https://github.com/dpgagliardi)** as a personal project. It started under the SkapaCraft name, which has since been retired.
 
 Questions, or a problem that is not a security issue: open an issue here, or write to skapacraftlabs@gmail.com.
 
