@@ -4,6 +4,8 @@ A Garmin Connect IQ widget that stores your medical ID information (blood type, 
 
 **Author:** Daniele Gagliardi
 
+**[Get it on the Connect IQ Store](https://apps.garmin.com/apps/e72b255d-4447-4834-8b2f-5f7e2b431387)** · **[Privacy policy](PRIVACY.md)** · **[Changelog](CHANGELOG.md)**
+
 ---
 
 ## ⚠️ Important: not a medical device
@@ -101,6 +103,8 @@ See [CHANGELOG.md](CHANGELOG.md) for the full history.
 ## Author
 
 Built and maintained by **Daniele Gagliardi** as a personal project. It started under the SkapaCraft name, which has since been retired.
+
+Questions, or a problem that is not a security issue: open an issue here, or write to skapacraftlabs@gmail.com.
 
 ## Trademarks
 
