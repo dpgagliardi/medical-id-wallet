@@ -4,8 +4,6 @@
 **Contact:** skapacraftlabs@gmail.com
 **Last updated:** 3 October 2026
 
-This policy used to live at skapacraft.com/tools/garmin/medical-id-wallet/privacy/. It now lives here, next to the source it describes. The content is unchanged, apart from the contact details.
-
 ## The short version
 
 Medical ID Wallet runs entirely on your Garmin device. The app makes no network requests and transmits nothing to any server, ours or a third party's: we never receive your data and have no way to see it. Note that you enter that data through Garmin Connect Mobile, so it is handled by Garmin's own apps and services on its way to your watch. See [Garmin's role](#garmins-role) below.
