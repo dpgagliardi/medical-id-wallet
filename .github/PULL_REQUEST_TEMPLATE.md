@@ -1,5 +1,5 @@
 <!--
-Copyright (C) 2026 SkapaCraft <https://skapacraft.com>
+Copyright (C) 2026 Daniele Gagliardi
 -->
 
 ## What this changes

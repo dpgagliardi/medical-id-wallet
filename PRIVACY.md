@@ -1,10 +1,10 @@
 # Privacy Policy - Medical ID Wallet
 
-**Developer:** Daniele Gagliardi (SkapaCraft), Parma, Italy
+**Developer:** Daniele Gagliardi, Parma, Italy
 **Contact:** skapacraftlabs@gmail.com
 **Last updated:** 3 October 2026
 
-This policy used to live at skapacraft.com/tools/garmin/medical-id-wallet/privacy/. It now lives here, next to the source it describes. The content is unchanged, apart from the contact address.
+This policy used to live at skapacraft.com/tools/garmin/medical-id-wallet/privacy/. It now lives here, next to the source it describes. The content is unchanged, apart from the contact details.
 
 ## The short version
 
