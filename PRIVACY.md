@@ -1,6 +1,6 @@
 # Privacy Policy - Medical ID Wallet
 
-**Developer:** Daniele Gagliardi, Parma, Italy
+**Developer:** Daniele Gagliardi
 **Contact:** skapacraftlabs@gmail.com
 **Last updated:** 3 October 2026
 

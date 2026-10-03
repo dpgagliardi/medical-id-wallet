@@ -102,9 +102,12 @@ See [CHANGELOG.md](CHANGELOG.md) for the full history.
 
 ## Author
 
-Built and maintained by **[dpgagliardi](https://github.com/dpgagliardi)** as a personal project. It started under the SkapaCraft name, which has since been retired.
+Built and maintained by [dpgagliardi](https://github.com/dpgagliardi) as a personal
+project, in spare time.
 
-Questions, or a problem that is not a security issue: open an issue here, or write to skapacraftlabs@gmail.com.
+- **Bugs and suggestions:** open an [issue](https://github.com/dpgagliardi/medical-id-wallet/issues).
+- **Security problems:** privately, as described in [Reporting a security problem](#reporting-a-security-problem).
+- **Anything else:** skapacraftlabs@gmail.com
 
 ## Trademarks
 
