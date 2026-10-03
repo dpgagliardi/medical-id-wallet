@@ -36,6 +36,8 @@ Open **Garmin Connect Mobile** → your device → **Widget Settings** → Medic
 
 One honest caveat: you enter these fields in Garmin Connect Mobile, so the values are handled by Garmin's own apps and services on their way to the watch, under [Garmin's privacy policy](https://www.garmin.com/en-US/privacy/global/policy/) rather than ours. We can't see that and don't control it. Every field is optional, so leave blank anything you'd rather Garmin not hold.
 
+Full [privacy policy](PRIVACY.md).
+
 **Before selling, gifting, or discarding your watch**, remember to reset it to factory settings (or clear the app's settings in Garmin Connect Mobile) to remove your personal and medical information from the device.
 
 ## Languages
