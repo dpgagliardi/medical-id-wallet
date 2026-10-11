@@ -57,13 +57,13 @@ EN · IT · DE · FR · ES · PT · NL · PL · SV · NO · DA · FI · RU · JA
 
 ## Barcode compatibility
 
-- **QR code**: recommended. Renders reliably on all supported devices and scans with any phone camera.
+- **QR code**: recommended. Scans with any phone camera, and renders on every supported device except a few models from 2015 to 2017 (Forerunner 230/235/630/735XT/920XT, fenix 3, D2 Bravo and Charlie, vivoactive and vivoactive HR, epix, Approach S60), whose firmware lacks what the encoder needs; there the app says so and Code 39 is the alternative.
 - **Code 39 (linear barcode)**: needs considerably more horizontal space than a watch screen usually offers. The app only draws the bars when they come out wide enough to actually be scanned; otherwise it shows the value as large, readable text rather than a barcode no scanner could decode. With a long value (a 16-character Codice Fiscale, for example) expect the text panel on most devices. Shorter values on larger displays do render as bars.
 
 ## Requirements
 
 - Garmin Connect IQ 3.0+
-- Compatible with 249 Garmin devices (wrist-worn wearables)
+- Compatible with 136 Garmin devices (wrist-worn wearables)
 
 ## Build
 
