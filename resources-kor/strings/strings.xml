@@ -51,5 +51,6 @@
   <string id="docTypeGeneric">Code 39 (짧은 코드만)</string>
   <string id="barcodeTooLong">바코드에 너무 김 - QR 사용</string>
   <string id="barcodeUnsupportedChars">바코드에 쓸 수 없는 문자 - QR 사용</string>
+  <string id="barcodeQrNoMemory">이 시계에서는 QR을 사용할 수 없음</string>
   <string id="pressStart">START 누르기</string>
 </strings>

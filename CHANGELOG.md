@@ -8,7 +8,28 @@ here is the one in `manifest.xml`, which is what the Connect IQ Store publishes.
 Versions 1.0.1 and 1.0.2 were store iterations made before this repository was
 published, so their history starts at the 1.0.2 entry below.
 
-## [Unreleased]
+## [1.1.1] - 2026-10-11
+
+### Fixed
+- QR codes now work on watches whose widgets get 64 KB of memory
+  (Forerunner 55, Instinct 2/2X/2S, Forerunner 245 and others), about a
+  quarter of installs according to the Connect IQ Store statistics. They used
+  to show the value as plain text with no explanation, because of a fixed
+  memory threshold sized for an encoder that stored every module as a
+  separate object. The encoder now keeps its data in byte arrays, producing
+  identical codes in a fraction of the memory, and checks the memory actually
+  free. When a QR still cannot be drawn, the screen now says so.
+- The QR is now built over a few timer ticks instead of inside a single
+  screen redraw, which on slower watches such as the Forerunner 55 tripped
+  the watchdog and closed the app. An empty panel of the final size shows
+  for a fraction of a second while it is built.
+- On watches with a subscreen (Instinct 2/2S/2X/Crossover/3 Solar/E,
+  Descent G1), the barcode was centred with its top-right corner behind the
+  subscreen, where the real watch hides part of it under the subscreen's
+  frame. The code now stops just below the subscreen and is sized to fit,
+  and every scroll stop starts below it. The band beside the subscreen is
+  kept empty, so the end of the previous field no longer shows cut in half
+  by its frame.
 
 ### Changed
 - Licence: added a NOTICE file with additional terms under section 7 of the

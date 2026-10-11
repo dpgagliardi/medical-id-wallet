@@ -51,5 +51,6 @@
   <string id="docTypeGeneric">Code 39 (nur kurze Codes)</string>
   <string id="barcodeTooLong">Zu lang für Balken - QR nutzen</string>
   <string id="barcodeUnsupportedChars">Zeichen nicht für Balken - QR nutzen</string>
+  <string id="barcodeQrNoMemory">QR auf dieser Uhr nicht verfügbar</string>
   <string id="pressStart">START drücken</string>
 </strings>

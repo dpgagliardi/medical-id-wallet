@@ -42,6 +42,17 @@ class MedicalIdView extends WatchUi.View {
         var backlightOn = false;
         try {
             backlightOn = drawMainScreen(dc);
+            // Watches with a subscreen: the band from the top edge down to
+            // the subscreen's bottom stays empty. Scroll stops put every
+            // field below it, so only the tail of the previous field ever
+            // lands there, and on the watch the subscreen's frame would cut
+            // those lines in half ("ORGAN DO_OR:"). Blanking the full width
+            // reads as a top margin rather than as text with a hole in it.
+            var subBottom = barcodeRenderer.subscreenBottom();
+            if (subBottom > 0 && model.hasData()) {
+                dc.setColor(COLOR_BLACK, COLOR_BLACK);
+                dc.fillRectangle(0, 0, dc.getWidth(), subBottom);
+            }
         } catch (ex) {
             // Render aborted partway through: avoid leaving a stuck black
             // frame; reset scroll so the next update starts from a known-good state.
@@ -142,6 +153,11 @@ class MedicalIdView extends WatchUi.View {
         if (isRound) {
             topMargin += 15;
         }
+        // On a watch with a subscreen (Instinct and Descent G1), every stop
+        // brings its field in below it, so the first line after a DOWN press
+        // is never partly behind the subscreen's frame.
+        var subBottom = barcodeRenderer.subscreenBottom();
+        if (subBottom + 2 > topMargin) { topMargin = subBottom + 2; }
         stopOffsets  = [] as Array<Number>;
         blockBottoms = [] as Array<Number>;
 
@@ -325,7 +341,8 @@ class MedicalIdView extends WatchUi.View {
                                                      centerX, yPos, maxW, tiny) + 4;
                 }
                 yPos = barcodeRenderer.drawBarcodeAt(dc, model.getDocType(),
-                                                      content as String, yPos, height);
+                                                      content as String, yPos, height,
+                                                      yPos - start);
                 barcodeVisible = barcodeRenderer.isLastBarcodeVisible();
                 // The renderer's return value includes 60px of bottom padding.
                 var panelBottom = yPos - 60;
@@ -333,7 +350,9 @@ class MedicalIdView extends WatchUi.View {
                 // The stop for the code centres caption + panel on screen,
                 // which is where it is scanned from, rather than pinning it to
                 // the top margin like a text field.
-                barcodeStop = blockH < height
+                // Below a subscreen the block is pinned under it instead:
+                // centring would put the code's top corner behind it.
+                barcodeStop = (blockH < height && subBottom == 0)
                     ? start + scrollOffset - (height - blockH) / 2
                     : start + scrollOffset - topMargin;
                 if (barcodeStop < 0) { barcodeStop = 0; }
