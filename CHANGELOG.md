@@ -8,6 +8,43 @@ here is the one in `manifest.xml`, which is what the Connect IQ Store publishes.
 Versions 1.0.1 and 1.0.2 were store iterations made before this repository was
 published, so their history starts at the 1.0.2 entry below.
 
+## [1.1.0] - 2026-10-11
+
+### Changed
+- New launcher icon: an ID card with a heart on a red disc, drawn as bold
+  shapes that stay legible down to 26px. It replaces a detailed card
+  illustration that turned to mush at watch size and still carried the logo
+  of the organization the project used to live under.
+- One launcher icon PNG per size the devices actually ask for (17 sizes,
+  26x26 to 70x70), generated from SVG masters by `store/icon/build_icons.py`,
+  instead of a single 48x48 PNG the compiler rescaled for every device. The
+  1-bit Instinct models get a dedicated black and white variant.
+
+- Compact profile layout: each field reads "LABEL: value" on one line
+  instead of a label line over a value line, the name fits on one line when
+  it can, and the blood type label sits beside its box. Wearers reported
+  needing too many DOWN presses to reach the end of a full profile. Phone
+  numbers, IDs and dates are never split between words: when one does not fit
+  beside its label it moves to its own line, whole.
+- Scrolling stops on field boundaries instead of moving a fixed 45% of the
+  screen: each DOWN brings the first field not fully shown to the top, so no
+  line, number or code is left cut by the screen edge, and the barcode stop
+  centres the code on screen. Fewer presses are needed as a result.
+
+### Fixed
+- A Code 39 barcode silently left out any character the symbology lacks
+  (`_`, `#`, accented letters), so a scanner read back a different value from
+  the real ID. Such a value is now shown as text, with a hint to switch to QR.
+- The text shown in place of a barcode was drawn on a single line and a long
+  override code ran off the panel. It now wraps, and the panel grows to fit.
+- The "no data" screen placed its lines at fixed pixel offsets, so they
+  overlapped on high-resolution screens and long translations ran under the
+  bezel. Lines now wrap and stack by real font height.
+- Shortening the profile from the phone while scrolled to the bottom left a
+  blank screen until the next scroll; the offset is now pulled back in range.
+- The cleanup of the legacy on-device copy of the profile ran on every
+  launch and settings change. It now runs once per install.
+
 ## [1.0.4] - 2026-09-16
 
 ### Removed
