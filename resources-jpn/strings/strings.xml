@@ -51,5 +51,6 @@
   <string id="docTypeGeneric">Code 39（短いコードのみ）</string>
   <string id="barcodeTooLong">バーには長すぎます - QRを使用</string>
   <string id="barcodeUnsupportedChars">バーに使えない文字 - QRを使用</string>
+  <string id="barcodeQrNoMemory">この時計ではQRを使用できません</string>
   <string id="pressStart">STARTを押す</string>
 </strings>

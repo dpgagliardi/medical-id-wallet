@@ -51,5 +51,6 @@
   <string id="docTypeGeneric">Code 39 (endast korta koder)</string>
   <string id="barcodeTooLong">För långt för streck - använd QR</string>
   <string id="barcodeUnsupportedChars">Tecken ogiltiga för streck - använd QR</string>
+  <string id="barcodeQrNoMemory">QR inte tillgängligt på denna klocka</string>
   <string id="pressStart">Tryck på START</string>
 </strings>

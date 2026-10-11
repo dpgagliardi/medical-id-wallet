@@ -51,5 +51,6 @@
   <string id="docTypeGeneric">Code 39 (alleen korte codes)</string>
   <string id="barcodeTooLong">Te lang voor streepjes - QR</string>
   <string id="barcodeUnsupportedChars">Ongeldige tekens voor streepjes - QR</string>
+  <string id="barcodeQrNoMemory">QR niet beschikbaar op dit horloge</string>
   <string id="pressStart">Druk op START</string>
 </strings>

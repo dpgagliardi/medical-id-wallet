@@ -51,5 +51,6 @@
   <string id="docTypeGeneric">Code 39 (apenas códigos curtos)</string>
   <string id="barcodeTooLong">Muito longo para barras - use QR</string>
   <string id="barcodeUnsupportedChars">Caracteres inválidos para barras - use QR</string>
+  <string id="barcodeQrNoMemory">QR indisponível neste relógio</string>
   <string id="pressStart">Pressione START</string>
 </strings>

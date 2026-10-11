@@ -8,7 +8,9 @@
 
 import Toybox.Graphics;
 import Toybox.Lang;
+import Toybox.Math;
 import Toybox.System;
+import Toybox.Timer;
 import Toybox.WatchUi;
 
 // Barcode renderer: QR (spec-compliant encoder, versions 1-4, ECC L) and
@@ -91,6 +93,7 @@ class BarcodeRenderer {
     private const HINT_USE_QR      = 1;  // Code 39 cannot fit this value
     private const HINT_QR_TOO_LONG = 2;  // value exceeds QR version 4 capacity
     private const HINT_UNSUPPORTED = 3;  // value has characters Code 39 lacks
+    private const HINT_QR_NO_MEMORY = 4; // too little free memory to build a QR
 
     // Horizontal inset on round displays so bars and white panel stay inside
     // the circular mask. On rectangular displays this is just padding.
@@ -107,8 +110,25 @@ class BarcodeRenderer {
     // to blow the render/watchdog budget on a MIP device (reported as the
     // app "freezing"). Cache the built matrix per (docType, text) and only
     // rebuild when the content actually changes.
-    private var cachedKey    as String?;
-    private var cachedResult as Dictionary?;
+    private var cachedKey     as String?;
+    private var cachedModules as ByteArray?;
+
+    // QR build in progress. Building runs on a timer, one stage per tick
+    // (see buildStep), never inside onUpdate(): done in one go it tripped
+    // the watchdog ("Code Executed Too Long") on slower watches such as the
+    // Forerunner 55, whose onUpdate() also does all the text layout.
+    private var buildKey      as String?;
+    private var buildText     as String = "";
+    private var buildStage    as Number = 0;
+    private var buildVersion  as Number = 0;
+    private var buildN        as Number = 0;
+    private var buildWords    as ByteArray?;   // data, then data + EC codewords
+    private var buildModules  as ByteArray?;
+    private var buildIsFn     as ByteArray?;
+    private var buildCol      as Number = 0;   // placement: next column pair
+    private var buildBitIndex as Number = 0;   // placement: next codeword bit
+    private var buildRow      as Number = 0;   // masking: next row
+    private var buildTimer    as Timer.Timer?;
 
     // Whether the last drawBarcodeAt() call actually had the panel on screen.
     // The view uses this to decide about the backlight, instead of trying to
@@ -141,14 +161,43 @@ class BarcodeRenderer {
     //! Code39 (simple, reliable) cover the practical cases.
     //! Always returns the bottom Y of the section (including bottom padding)
     //! whether or not it was actually drawn, so scroll extents stay correct.
+    //! reservedAbove: height of what the view draws right above the panel
+    //! (the code label), which must fit on screen together with it.
     function drawBarcodeAt(dc as Dc, docType as Number, text as String,
-                            topY as Number, screenH as Number) as Number {
+                            topY as Number, screenH as Number,
+                            reservedAbove as Number) as Number {
         lastBarcodeVisible = false;
+        // Below a subscreen, the panel and its label share what is left of
+        // the screen height; see subscreenBottom().
+        var sub = subscreenBottom();
+        maxPanelH = sub > 0 ? screenH - sub - reservedAbove - 6 : screenH;
         switch (docType) {
             case 1: return drawQrAt(dc, text, topY, screenH);
             case 2: return drawCode39At(dc, text, topY, screenH);
             default: return topY;
         }
+    }
+
+    // Tallest panel that fits on screen with its label (set per call by
+    // drawBarcodeAt).
+    private var maxPanelH as Number = 0;
+
+    //! Bottom edge of the subscreen (the small separate round display in
+    //! the top-right corner of the Instinct 2/2S/2X/Crossover/3 Solar/E and
+    //! Descent G1), or 0 on watches without one. Content drawn in its
+    //! bounding box is partly hidden by the subscreen's frame and corners on
+    //! the real watch, which in the simulator is easy to miss: a QR centred
+    //! on an Instinct 2 had its top-right finder pattern under it, and a code
+    //! missing a finder pattern often does not scan. The view stops the
+    //! barcode block just below this edge, and the panel is sized to fit.
+    function subscreenBottom() as Number {
+        if (WatchUi has :getSubscreen) {
+            var box = WatchUi.getSubscreen();
+            if (box != null) {
+                return (box as Graphics.BoundingBox).y + (box as Graphics.BoundingBox).height;
+            }
+        }
+        return 0;
     }
 
     //! Calculate safe square size for QR on round displays.
@@ -159,48 +208,80 @@ class BarcodeRenderer {
         var w = dc.getWidth();
         var h = dc.getHeight();
         var base = w < h ? w : h;
-        if (shape == System.SCREEN_SHAPE_ROUND) {
-            return (base * 0.70).toNumber();
-        }
-        return (base * 0.85).toNumber();
+        var size = (shape == System.SCREEN_SHAPE_ROUND)
+            ? (base * 0.70).toNumber() : (base * 0.85).toNumber();
+        return size < maxPanelH ? size : maxPanelH;
     }
 
     //! QR code renderer (medical insurance / digital health).
     //! Full spec-compliant QR encoder: alphanumeric/byte mode, versions 1-4,
     //! ECC level L, Reed-Solomon (GF(256)) error correction, mask 0, real
     //! finder/timing/alignment/format-info placement. Scannable output.
+    //! Devices below API 3.0.0 (Forerunner 230/235/630/735XT/920XT, fenix 3,
+    //! D2 Bravo and some D2 Charlie part numbers, vivoactive and vivoactive
+    //! HR, epix, Approach S60) have no
+    //! ByteArray, which the encoder needs to fit in a widget's memory, and
+    //! referencing it there is a compile error rather than something to
+    //! check at runtime. monkey.jungle builds them with this variant, which
+    //! says so instead of drawing a QR. None of them could draw one before
+    //! either: the old memory gate was out of their reach.
+    (:noQrEncoder)
+    private function drawQrAt(dc as Dc, text as String, topY as Number,
+                               screenH as Number) as Number {
+        return drawTextFallbackAt(dc, text, topY, screenH, HINT_QR_NO_MEMORY);
+    }
+
+    (:qrEncoder)
     private function drawQrAt(dc as Dc, text as String, topY as Number,
                                screenH as Number) as Number {
         // Fallback panels show the plain value: the "[QR] " prefix that used
         // to be prepended here was internal notation leaking into an
         // emergency screen, where every character on display should be
         // information a responder can act on.
-        if (!hasSufficientMemoryFor2DMatrix()) {
-            return drawTextFallbackAt(dc, text, topY, screenH, HINT_NONE);
-        }
         var key = "qr:" + text;
-        var qr;
         if (cachedKey != null && (cachedKey as String).equals(key)) {
-            qr = cachedResult;
-        } else {
-            qr = buildQrMatrix(text);
-            cachedKey = key;
-            cachedResult = qr;
+            if (cachedModules == null) {
+                return drawTextFallbackAt(dc, text, topY, screenH, HINT_QR_TOO_LONG);
+            }
+            var modules = cachedModules as ByteArray;
+            return renderModuleMatrix(dc, modules, Math.sqrt(modules.size()).toNumber(),
+                                      topY, screenH);
         }
-        if (qr == null) {
+        var versionIdx = qrVersionFor(text);
+        if (versionIdx < 0) {
+            cachedKey = key;
+            cachedModules = null;
             return drawTextFallbackAt(dc, text, topY, screenH, HINT_QR_TOO_LONG);
         }
-        var n = qr["size"] as Number;
-        return renderModuleMatrix(dc, qr["modules"] as Array<Array<Boolean> >,
-                                   n, n, topY, screenH);
+        if (buildKey == null || !(buildKey as String).equals(key)) {
+            // The memory check only guards building: a cached matrix costs
+            // nothing more to draw.
+            if (!hasMemoryToBuildQr()) {
+                return drawTextFallbackAt(dc, text, topY, screenH, HINT_QR_NO_MEMORY);
+            }
+            startQrBuild(text, key, versionIdx);
+        }
+        // Still building: an empty panel of the final size, so the layout,
+        // the scroll stops and the backlight decision are already right.
+        return renderModuleMatrix(dc, null, QR_SIZES[versionIdx], topY, screenH);
     }
 
-    //! Memory gate: full 2D matrix generation (RS tables, module grids) needs
-    //! headroom that legacy MIP devices (e.g. Forerunner 255) don't have.
-    //! AMOLED devices and newer MIP devices report larger totalMemory.
-    private function hasSufficientMemoryFor2DMatrix() as Boolean {
-        var stats = System.getSystemStats();
-        return stats.totalMemory >= 100000;
+    //! Free heap required before building a QR. The encoder keeps everything
+    //! in ByteArrays (one byte per module or codeword): its peak is the two
+    //! 33x33 grids, 1089 bytes each, plus under 1 KB of codewords and GF(256)
+    //! tables, and a UTF-8 copy of the payload. This leaves a wide margin
+    //! over that.
+    //! It replaces a fixed `totalMemory >= 100000` gate, sized for an older
+    //! encoder that stored every module and every bit as a separate Array
+    //! element. That gate refused QR outright on every watch whose widgets
+    //! get 64 KB (Forerunner 55, Instinct 2/2X/2S, Forerunner 245 and
+    //! more), about a quarter of the installed base, which saw plain text
+    //! with no explanation instead.
+    private const QR_MIN_FREE_MEMORY = 8192;
+
+    (:qrEncoder)
+    private function hasMemoryToBuildQr() as Boolean {
+        return System.getSystemStats().freeMemory >= QR_MIN_FREE_MEMORY;
     }
 
     //! Modules of quiet zone (blank border) on each side. The QR spec
@@ -212,23 +293,22 @@ class BarcodeRenderer {
     //! area on round screens).
     private const QUIET_ZONE_MODULES = 4;
 
-    //! Renders a boolean module grid (QR) as a white panel with black modules.
-    private function renderModuleMatrix(dc as Dc, modules as Array<Array<Boolean> >, rows as Number,
-                                         cols as Number, topY as Number,
-                                         screenH as Number) as Number {
+    //! Renders an n x n module grid (QR, row-major, nonzero = dark) as a
+    //! white panel with black modules. With modules null (QR still being
+    //! built) it draws the empty panel only.
+    (:qrEncoder)
+    private function renderModuleMatrix(dc as Dc, modules as ByteArray?, n as Number,
+                                         topY as Number, screenH as Number) as Number {
         var fullWidth  = dc.getWidth();
         var widthBudget = safeSquareSize(dc);
-        var longestSide = rows > cols ? rows : cols;
         // Reserve the quiet zone's module-equivalent width WITHIN the safe
         // footprint budget, instead of adding it on top afterward.
-        var moduleSize = widthBudget / (longestSide + (QUIET_ZONE_MODULES * 2));
+        var moduleSize = widthBudget / (n + (QUIET_ZONE_MODULES * 2));
         if (moduleSize < 1) { moduleSize = 1; }
 
-        var gridW  = cols * moduleSize;
-        var gridH  = rows * moduleSize;
         var quiet  = QUIET_ZONE_MODULES * moduleSize;
-        var panelW = gridW + (2 * quiet);
-        var panelH = gridH + (2 * quiet);
+        var panelW = (n * moduleSize) + (2 * quiet);
+        var panelH = panelW;
         var panelX = (fullWidth - panelW) / 2;
 
         if (!checkVisible(topY, panelH, screenH)) {
@@ -238,11 +318,14 @@ class BarcodeRenderer {
         dc.setColor(0xFFFFFF, Graphics.COLOR_TRANSPARENT);
         dc.fillRectangle(panelX, topY, panelW, panelH);
 
+        if (modules == null) {
+            return topY + panelH + 60;
+        }
+        var grid = modules as ByteArray;
         dc.setColor(0x000000, Graphics.COLOR_TRANSPARENT);
-        for (var r = 0; r < rows; r++) {
-            var rowArr = modules[r] as Array<Boolean>;
-            for (var c = 0; c < cols; c++) {
-                if (rowArr[c]) {
+        for (var r = 0; r < n; r++) {
+            for (var c = 0; c < n; c++) {
+                if (grid[(r * n) + c] != 0) {
                     dc.fillRectangle(panelX + quiet + (c * moduleSize),
                                       topY + quiet + (r * moduleSize),
                                       moduleSize, moduleSize);
@@ -254,16 +337,30 @@ class BarcodeRenderer {
 
     // ---------------------------------------------------------------
     // QR encoder (versions 1-4, ECC level L)
+    //
+    // All working storage is ByteArray, one byte per value: grids are flat
+    // and row-major (cell (r, c) is at r * n + c). Plain Arrays of Boolean or
+    // Number cost several bytes per element plus a header per row, which put
+    // the encoder out of reach of 64 KB widgets.
     // ---------------------------------------------------------------
 
     private const QR_ALPHANUMERIC = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:";
 
-    private function appendBits(bits as Array, value as Number, length as Number) as Void {
+    //! Writes the low `length` bits of value, most significant first, at bit
+    //! position pos of buf (which must start zeroed). Returns the new pos.
+    (:qrEncoder)
+    private function writeBits(buf as ByteArray, pos as Number, value as Number,
+                               length as Number) as Number {
         for (var i = length - 1; i >= 0; i--) {
-            bits.add((value >> i) & 1);
+            if (((value >> i) & 1) == 1) {
+                buf[pos / 8] = buf[pos / 8] | (0x80 >> (pos % 8));
+            }
+            pos++;
         }
+        return pos;
     }
 
+    (:qrEncoder)
     private function isAlphanumericQr(text as String) as Boolean {
         for (var i = 0; i < text.length(); i++) {
             if (QR_ALPHANUMERIC.find(text.substring(i, i + 1)) == null) {
@@ -273,27 +370,34 @@ class BarcodeRenderer {
         return true;
     }
 
-    private function buildGf256Tables() as Dictionary {
-        var expTable = new [512];
-        var logTable = new [256];
+    //! exp has 512 entries so exp[a + b] needs no modulo for a, b < 255.
+    (:qrEncoder)
+    private function buildGfExp() as ByteArray {
+        var expTable = new [512]b;
         var val = 1;
         for (var i = 0; i < 255; i++) {
             expTable[i] = val;
-            logTable[val] = i;
             val = val * 2;
             if (val >= 256) { val = val ^ 0x11D; }
         }
         for (var i = 255; i < 512; i++) { expTable[i] = expTable[i - 255]; }
-        return { "exp" => expTable, "log" => logTable };
+        return expTable;
     }
 
-    private function rsGeneratorPoly(ecCount as Number, gf as Dictionary) as Array {
-        var exp = gf["exp"] as Array;
-        var log = gf["log"] as Array;
-        var poly = [1];
+    (:qrEncoder)
+    private function buildGfLog(expTable as ByteArray) as ByteArray {
+        var logTable = new [256]b;
+        for (var i = 0; i < 255; i++) { logTable[expTable[i]] = i; }
+        return logTable;
+    }
+
+    (:qrEncoder)
+    private function rsGeneratorPoly(ecCount as Number, exp as ByteArray,
+                                     log as ByteArray) as ByteArray {
+        var poly = new [1]b;
+        poly[0] = 1;
         for (var i = 0; i < ecCount; i++) {
-            var newPoly = new [poly.size() + 1];
-            for (var j = 0; j < newPoly.size(); j++) { newPoly[j] = 0; }
+            var newPoly = new [poly.size() + 1]b;
             for (var j = 0; j < poly.size(); j++) {
                 newPoly[j] = newPoly[j] ^ poly[j];
                 var product = (poly[j] == 0) ? 0 : exp[(log[poly[j]] + i) % 255];
@@ -304,12 +408,11 @@ class BarcodeRenderer {
         return poly;
     }
 
-    private function rsComputeRemainder(data as Array, ecCount as Number, gf as Dictionary) as Array {
-        var exp = gf["exp"] as Array;
-        var log = gf["log"] as Array;
-        var generator = rsGeneratorPoly(ecCount, gf);
-        var remainder = new [ecCount];
-        for (var i = 0; i < ecCount; i++) { remainder[i] = 0; }
+    (:qrEncoder)
+    private function rsComputeRemainder(data as ByteArray, ecCount as Number,
+                                        exp as ByteArray, log as ByteArray) as ByteArray {
+        var generator = rsGeneratorPoly(ecCount, exp, log);
+        var remainder = new [ecCount]b;
         for (var i = 0; i < data.size(); i++) {
             var factor = data[i] ^ remainder[0];
             for (var j = 0; j < ecCount - 1; j++) { remainder[j] = remainder[j + 1]; }
@@ -341,7 +444,8 @@ class BarcodeRenderer {
     //! decode, verified via an independent Python re-implementation cross-
     //! checked against the `qrcode` reference library's module matrix and
     //! zbar decoding.
-    private function markFinderArea(modules as Array<Array<Boolean> >, isFn as Array<Array<Boolean> >, n as Number,
+    (:qrEncoder)
+    private function markFinderArea(modules as ByteArray, isFn as ByteArray, n as Number,
                                      top as Number, left as Number) as Void {
         var rowStart = top - 1; if (rowStart < 0) { rowStart = 0; }
         var rowEnd   = top + 8; if (rowEnd > n) { rowEnd = n; }
@@ -349,24 +453,25 @@ class BarcodeRenderer {
         var colEnd   = left + 8; if (colEnd > n) { colEnd = n; }
         for (var r = rowStart; r < rowEnd; r++) {
             for (var c = colStart; c < colEnd; c++) {
-                isFn[r][c] = true;
-                modules[r][c] = false;
+                isFn[(r * n) + c] = 1;
+                modules[(r * n) + c] = 0;
             }
         }
         for (var dr = 0; dr < 7; dr++) {
             for (var dc = 0; dc < 7; dc++) {
                 var black = (dr == 0 || dr == 6 || dc == 0 || dc == 6 ||
                              (dr >= 2 && dr <= 4 && dc >= 2 && dc <= 4));
-                modules[top + dr][left + dc] = black;
+                modules[((top + dr) * n) + left + dc] = black ? 1 : 0;
             }
         }
     }
 
-    private function drawTimingPatterns(modules as Array<Array<Boolean> >, isFn as Array<Array<Boolean> >, n as Number) as Void {
+    (:qrEncoder)
+    private function drawTimingPatterns(modules as ByteArray, isFn as ByteArray, n as Number) as Void {
         for (var i = 8; i < n - 8; i++) {
-            var black = ((i % 2) == 0);
-            modules[6][i] = black; isFn[6][i] = true;
-            modules[i][6] = black; isFn[i][6] = true;
+            var black = ((i % 2) == 0) ? 1 : 0;
+            modules[(6 * n) + i] = black; isFn[(6 * n) + i] = 1;
+            modules[(i * n) + 6] = black; isFn[(i * n) + 6] = 1;
         }
     }
 
@@ -377,67 +482,80 @@ class BarcodeRenderer {
     //! unconditionally overwrites afterward, silently dropping one bit and
     //! shifting every subsequent bit in the zig-zag traversal by one
     //! position, corrupting the entire rest of the payload.
-    private function reserveFormatAreas(isFn as Array<Array<Boolean> >, n as Number) as Void {
+    (:qrEncoder)
+    private function reserveFormatAreas(isFn as ByteArray, n as Number) as Void {
         // Column 8 (vertical copy): rows 0-5, 7, 8, then n-7..n-1, plus the
         // fixed dark module at row n-8.
-        for (var i = 0; i <= 5; i++) { isFn[i][8] = true; }
-        isFn[7][8] = true;
-        isFn[8][8] = true;
-        for (var i = n - 7; i <= n - 1; i++) { isFn[i][8] = true; }
-        isFn[n - 8][8] = true;
+        for (var i = 0; i <= 5; i++) { isFn[(i * n) + 8] = 1; }
+        isFn[(7 * n) + 8] = 1;
+        isFn[(8 * n) + 8] = 1;
+        for (var i = n - 7; i <= n - 1; i++) { isFn[(i * n) + 8] = 1; }
+        isFn[((n - 8) * n) + 8] = 1;
 
         // Row 8 (horizontal copy): cols 0-5, 7, then n-8..n-1.
-        for (var i = 0; i <= 5; i++) { isFn[8][i] = true; }
-        isFn[8][7] = true;
-        for (var i = n - 8; i <= n - 1; i++) { isFn[8][i] = true; }
+        for (var i = 0; i <= 5; i++) { isFn[(8 * n) + i] = 1; }
+        isFn[(8 * n) + 7] = 1;
+        for (var i = n - 8; i <= n - 1; i++) { isFn[(8 * n) + i] = 1; }
     }
 
-    private function drawAlignmentPattern(modules as Array<Array<Boolean> >, isFn as Array<Array<Boolean> >, center as Number) as Void {
+    (:qrEncoder)
+    private function drawAlignmentPattern(modules as ByteArray, isFn as ByteArray, n as Number,
+                                          center as Number) as Void {
         for (var dr = -2; dr <= 2; dr++) {
             for (var dc = -2; dc <= 2; dc++) {
-                var r = center + dr;
-                var c = center + dc;
+                var idx = ((center + dr) * n) + center + dc;
                 var black = (dr == -2 || dr == 2 || dc == -2 || dc == 2 || (dr == 0 && dc == 0));
-                modules[r][c] = black;
-                isFn[r][c] = true;
+                modules[idx] = black ? 1 : 0;
+                isFn[idx] = 1;
             }
         }
     }
 
     //! Zig-zag data placement (Nayuki-style: two-column strips, skipping the
     //! vertical timing column, alternating scan direction each strip).
-    private function placeQrData(modules as Array<Array<Boolean> >, isFn as Array<Array<Boolean> >, n as Number, codewords as Array) as Void {
+    //! Resumable: places at most maxStrips strips per call, carrying the
+    //! position in buildCol / buildBitIndex. Returns true when done.
+    (:qrEncoder)
+    private function placeQrData(modules as ByteArray, isFn as ByteArray, n as Number,
+                                 codewords as ByteArray, maxStrips as Number) as Boolean {
         var bitLen = codewords.size() * 8;
-        var bitIndex = 0;
-        var col = n - 1;
-        while (col >= 1) {
+        var bitIndex = buildBitIndex;
+        var col = buildCol;
+        var strips = 0;
+        while (col >= 1 && strips < maxStrips) {
             if (col == 6) { col = 5; }
             for (var vert = 0; vert < n; vert++) {
                 for (var j = 0; j < 2; j++) {
                     var c = col - j;
                     var upward = (((col + 1) & 2) == 0);
                     var row = upward ? (n - 1 - vert) : vert;
-                    if (!isFn[row][c]) {
+                    if (isFn[(row * n) + c] == 0) {
                         var bit = 0;
                         if (bitIndex < bitLen) {
-                            var byteIdx = bitIndex / 8;
-                            var bitOffset = 7 - (bitIndex % 8);
-                            bit = (codewords[byteIdx] >> bitOffset) & 1;
+                            bit = (codewords[bitIndex / 8] >> (7 - (bitIndex % 8))) & 1;
                             bitIndex++;
                         }
-                        modules[row][c] = (bit == 1);
+                        modules[(row * n) + c] = bit;
                     }
                 }
             }
             col -= 2;
+            strips++;
         }
+        buildCol = col;
+        buildBitIndex = bitIndex;
+        return col < 1;
     }
 
-    private function applyMask0(modules as Array<Array<Boolean> >, isFn as Array<Array<Boolean> >, n as Number) as Void {
-        for (var r = 0; r < n; r++) {
+    //! Mask pattern 0 over rows fromRow (inclusive) to toRow (exclusive).
+    (:qrEncoder)
+    private function applyMask0(modules as ByteArray, isFn as ByteArray, n as Number,
+                                fromRow as Number, toRow as Number) as Void {
+        for (var r = fromRow; r < toRow; r++) {
             for (var c = 0; c < n; c++) {
-                if (!isFn[r][c] && (((r + c) % 2) == 0)) {
-                    modules[r][c] = !modules[r][c];
+                var idx = (r * n) + c;
+                if (isFn[idx] == 0 && (((r + c) % 2) == 0)) {
+                    modules[idx] = 1 - modules[idx];
                 }
             }
         }
@@ -445,6 +563,7 @@ class BarcodeRenderer {
 
     //! BCH(15,5) format info for ECC level L + mask 0, XORed with the fixed
     //! format mask 0x5412 per the QR spec.
+    (:qrEncoder)
     private function computeFormatBits() as Number {
         var data = 0x08; // ECC L = 01, mask = 000
         var reg = data << 10;
@@ -468,120 +587,178 @@ class BarcodeRenderer {
     //! what was reported. Verified independently via a Python
     //! reimplementation, cross-checked module-by-module against a
     //! zbar-decodable reference QR image, until the diff was zero.
-    private function setFormatBits(modules as Array<Array<Boolean> >, n as Number, format as Number) as Void {
+    (:qrEncoder)
+    private function setFormatBits(modules as ByteArray, n as Number, format as Number) as Void {
         // "Vertical" copy: column 8, split top (bits 0-7) / bottom (bits 8-14)
         for (var i = 0; i <= 14; i++) {
-            var bit = (((format >> i) & 1) == 1);
-            if (i < 6) { modules[i][8] = bit; }
-            else if (i < 8) { modules[i + 1][8] = bit; }
-            else { modules[n - 15 + i][8] = bit; }
+            var bit = (format >> i) & 1;
+            if (i < 6) { modules[(i * n) + 8] = bit; }
+            else if (i < 8) { modules[((i + 1) * n) + 8] = bit; }
+            else { modules[((n - 15 + i) * n) + 8] = bit; }
         }
         // "Horizontal" copy: row 8, split right (bits 0-7) / left (bits 8-14)
         for (var i = 0; i <= 14; i++) {
-            var bit = (((format >> i) & 1) == 1);
-            if (i < 8) { modules[8][n - i - 1] = bit; }
-            else if (i < 9) { modules[8][15 - i] = bit; }
-            else { modules[8][14 - i] = bit; }
+            var bit = (format >> i) & 1;
+            if (i < 8) { modules[(8 * n) + n - i - 1] = bit; }
+            else if (i < 9) { modules[(8 * n) + 15 - i] = bit; }
+            else { modules[(8 * n) + 14 - i] = bit; }
         }
-        modules[n - 8][8] = true; // dark module, always black
+        modules[((n - 8) * n) + 8] = 1; // dark module, always black
     }
 
-    private function buildQrMatrix(text as String) as Dictionary? {
-        var sizes             = [21, 25, 29, 33];
-        var dataCodewordsCap  = [19, 34, 55, 80];
-        var ecCounts          = [7, 10, 15, 20];
-        var alignmentCenters  = [0, 18, 22, 26];
+    private const QR_SIZES          = [21, 25, 29, 33];
+    private const QR_DATA_CODEWORDS = [19, 34, 55, 80];
+    private const QR_EC_CODEWORDS   = [7, 10, 15, 20];
+    private const QR_ALIGN_CENTERS  = [0, 18, 22, 26];
 
+    //! Smallest version (index 0-3 for versions 1-4) that holds text at ECC
+    //! level L, or -1 when none does. Cheap enough to run on every frame.
+    (:qrEncoder)
+    private function qrVersionFor(text as String) as Number {
         // Bail out BEFORE doing any encoding work if the text is already too
         // long for version 4 in any mode (byte mode's ceiling is ~78 chars,
         // alphanumeric's is ~114); previously the full bitstream was built
         // first and only checked against capacity afterward, so an
         // unbounded-length input (e.g. a long Barcode Override) could do a
         // lot of avoidable work, or worse, before falling back to text.
-        if (text.length() > 120) { return null; }
+        if (text.length() > 120) { return -1; }
+        var segmentBits = isAlphanumericQr(text)
+            ? 4 + 9 + (11 * (text.length() / 2)) + (6 * (text.length() % 2))
+            : 4 + 8 + (8 * text.toUtf8Array().size());
+        for (var v = 0; v < QR_DATA_CODEWORDS.size(); v++) {
+            if ((QR_DATA_CODEWORDS[v] * 8) >= segmentBits) { return v; }
+        }
+        return -1;
+    }
 
-        var alphanumeric = isAlphanumericQr(text);
-        var bits = [];
-        if (alphanumeric) {
-            appendBits(bits, 0x2, 4);
-            appendBits(bits, text.length(), 9);
+    //! Data codewords for text at the given version: mode, count, payload,
+    //! terminator and pad codewords. The bits are written straight into a
+    //! zeroed codeword buffer, with no per-bit array in between.
+    (:qrEncoder)
+    private function encodeDataCodewords(text as String, versionIdx as Number) as ByteArray {
+        var capacityCodewords = QR_DATA_CODEWORDS[versionIdx] as Number;
+        var capBits = capacityCodewords * 8;
+        var dataCodewords = new [capacityCodewords]b;
+        var pos = 0;
+        if (isAlphanumericQr(text)) {
+            pos = writeBits(dataCodewords, pos, 0x2, 4);
+            pos = writeBits(dataCodewords, pos, text.length(), 9);
             var i = 0;
             while (i < text.length()) {
+                var a = QR_ALPHANUMERIC.find(text.substring(i, i + 1)) as Number;
                 if (i + 1 < text.length()) {
-                    var a = QR_ALPHANUMERIC.find(text.substring(i, i + 1));
-                    var b = QR_ALPHANUMERIC.find(text.substring(i + 1, i + 2));
-                    appendBits(bits, (a * 45) + b, 11);
+                    var b = QR_ALPHANUMERIC.find(text.substring(i + 1, i + 2)) as Number;
+                    pos = writeBits(dataCodewords, pos, (a * 45) + b, 11);
                     i += 2;
                 } else {
-                    var a = QR_ALPHANUMERIC.find(text.substring(i, i + 1));
-                    appendBits(bits, a, 6);
+                    pos = writeBits(dataCodewords, pos, a, 6);
                     i += 1;
                 }
             }
         } else {
-            var byteData = text.toUtf8Array();
-            appendBits(bits, 0x4, 4);
-            appendBits(bits, byteData.size(), 8);
-            for (var i = 0; i < byteData.size(); i++) { appendBits(bits, byteData[i], 8); }
+            var bytes = text.toUtf8Array();
+            pos = writeBits(dataCodewords, pos, 0x4, 4);
+            pos = writeBits(dataCodewords, pos, bytes.size(), 8);
+            for (var i = 0; i < bytes.size(); i++) { pos = writeBits(dataCodewords, pos, bytes[i], 8); }
         }
-
-        var versionIdx = -1;
-        for (var v = 0; v < sizes.size(); v++) {
-            if ((dataCodewordsCap[v] * 8) >= bits.size()) { versionIdx = v; break; }
-        }
-        if (versionIdx == -1) { return null; } // text too long for v1-4/ECC L, fall back
-
-        var capacityCodewords = dataCodewordsCap[versionIdx];
-        var ecCount = ecCounts[versionIdx];
-        var n = sizes[versionIdx];
-        var capBits = capacityCodewords * 8;
-
-        var termLen = capBits - bits.size();
+        // Terminator (up to 4 zero bits) and byte alignment: the buffer is
+        // already zeroed, so only the position moves. Then the alternating
+        // pad codewords fill the remaining capacity.
+        var termLen = capBits - pos;
         if (termLen > 4) { termLen = 4; }
-        appendBits(bits, 0, termLen);
-        while ((bits.size() % 8) != 0) { bits.add(0); }
+        pos += termLen;
         var padToggle = true;
-        while (bits.size() < capBits) {
-            appendBits(bits, padToggle ? 0xEC : 0x11, 8);
+        for (var c = (pos + 7) / 8; c < capacityCodewords; c++) {
+            dataCodewords[c] = padToggle ? 0xEC : 0x11;
             padToggle = !padToggle;
         }
+        return dataCodewords;
+    }
 
-        var dataCodewords = new [capacityCodewords];
-        for (var c = 0; c < capacityCodewords; c++) {
-            var value = 0;
-            for (var b = 0; b < 8; b++) { value = (value << 1) | bits[(c * 8) + b]; }
-            dataCodewords[c] = value;
+    (:qrEncoder)
+    private function startQrBuild(text as String, key as String, versionIdx as Number) as Void {
+        stopQrBuild();
+        buildKey     = key;
+        buildText    = text;
+        buildVersion = versionIdx;
+        buildN       = QR_SIZES[versionIdx] as Number;
+        buildStage   = 1;
+        var timer = new Timer.Timer();
+        timer.start(method(:buildStep), 30, true);
+        buildTimer = timer;
+    }
+
+    (:qrEncoder)
+    private function stopQrBuild() as Void {
+        if (buildTimer != null) { (buildTimer as Timer.Timer).stop(); }
+        buildTimer   = null;
+        buildKey     = null;
+        buildWords   = null;
+        buildModules = null;
+        buildIsFn    = null;
+        buildStage   = 0;
+    }
+
+    //! One stage of the QR build per timer tick, each well inside the
+    //! watchdog budget even on the slowest supported watch. The stages run
+    //! exactly the steps of a one-shot build, in the same order; only the
+    //! two longest loops (data placement and masking) are spread over
+    //! several ticks.
+    (:qrEncoder)
+    function buildStep() as Void {
+        var n = buildN;
+        if (buildStage == 1) {
+            buildWords = encodeDataCodewords(buildText, buildVersion);
+            buildStage = 2;
+        } else if (buildStage == 2) {
+            var dataCodewords = buildWords as ByteArray;
+            var capacityCodewords = dataCodewords.size();
+            var ecCount = QR_EC_CODEWORDS[buildVersion] as Number;
+            var gfExp = buildGfExp();
+            var gfLog = buildGfLog(gfExp);
+            var ecCodewords = rsComputeRemainder(dataCodewords, ecCount, gfExp, gfLog);
+            var allCodewords = new [capacityCodewords + ecCount]b;
+            for (var i = 0; i < capacityCodewords; i++) { allCodewords[i] = dataCodewords[i]; }
+            for (var i = 0; i < ecCount; i++) { allCodewords[capacityCodewords + i] = ecCodewords[i]; }
+            buildWords = allCodewords;
+            buildStage = 3;
+        } else if (buildStage == 3) {
+            var modules = new [n * n]b;
+            var isFn = new [n * n]b;
+            markFinderArea(modules, isFn, n, 0, 0);
+            markFinderArea(modules, isFn, n, n - 7, 0);
+            markFinderArea(modules, isFn, n, 0, n - 7);
+            drawTimingPatterns(modules, isFn, n);
+            reserveFormatAreas(isFn, n);
+            if (buildVersion >= 1) {
+                drawAlignmentPattern(modules, isFn, n, QR_ALIGN_CENTERS[buildVersion] as Number);
+            }
+            buildModules  = modules;
+            buildIsFn     = isFn;
+            buildCol      = n - 1;
+            buildBitIndex = 0;
+            buildStage    = 4;
+        } else if (buildStage == 4) {
+            if (placeQrData(buildModules as ByteArray, buildIsFn as ByteArray, n,
+                            buildWords as ByteArray, 4)) {
+                buildWords = null;
+                buildRow   = 0;
+                buildStage = 5;
+            }
+        } else if (buildStage == 5) {
+            var toRow = buildRow + 8;
+            if (toRow > n) { toRow = n; }
+            applyMask0(buildModules as ByteArray, buildIsFn as ByteArray, n, buildRow, toRow);
+            buildRow = toRow;
+            if (buildRow >= n) { buildStage = 6; }
+        } else if (buildStage == 6) {
+            var modules = buildModules as ByteArray;
+            setFormatBits(modules, n, computeFormatBits());
+            cachedKey     = buildKey;
+            cachedModules = modules;
+            stopQrBuild();
+            WatchUi.requestUpdate();
         }
-
-        var gf = buildGf256Tables();
-        var ecCodewords = rsComputeRemainder(dataCodewords, ecCount, gf);
-
-        var allCodewords = new [capacityCodewords + ecCount];
-        for (var i = 0; i < capacityCodewords; i++) { allCodewords[i] = dataCodewords[i]; }
-        for (var i = 0; i < ecCount; i++) { allCodewords[capacityCodewords + i] = ecCodewords[i]; }
-
-        var modules = new Array<Array<Boolean> >[n];
-        var isFn = new Array<Array<Boolean> >[n];
-        for (var r = 0; r < n; r++) {
-            modules[r] = new Array<Boolean>[n];
-            isFn[r] = new Array<Boolean>[n];
-            for (var c = 0; c < n; c++) { modules[r][c] = false; isFn[r][c] = false; }
-        }
-
-        markFinderArea(modules, isFn, n, 0, 0);
-        markFinderArea(modules, isFn, n, n - 7, 0);
-        markFinderArea(modules, isFn, n, 0, n - 7);
-        drawTimingPatterns(modules, isFn, n);
-        reserveFormatAreas(isFn, n);
-        if (versionIdx >= 1) {
-            drawAlignmentPattern(modules, isFn, alignmentCenters[versionIdx]);
-        }
-
-        placeQrData(modules, isFn, n, allCodewords);
-        applyMask0(modules, isFn, n);
-        setFormatBits(modules, n, computeFormatBits());
-
-        return { "size" => n, "modules" => modules };
     }
 
 
@@ -605,6 +782,9 @@ class BarcodeRenderer {
         var fullWidth  = dc.getWidth();
         var innerWidth = fullWidth - (2 * SIDE_MARGIN);
         var barH       = dc.getHeight() / 2;
+        // Panel is barH + textH + 20 tall; shrink the bars, not the text,
+        // when that would not fit below a subscreen.
+        if (barH + textH + 20 > maxPanelH) { barH = maxPanelH - textH - 20; }
 
         var totalUnits = (payload.length() * CHAR_UNITS) - 1 + (2 * QUIET_UNITS);
         var unit = innerWidth / totalUnits;
@@ -703,6 +883,8 @@ class BarcodeRenderer {
                 hintText = WatchUi.loadResource(Rez.Strings.barcodeTooLongQr) as String;
             } else if (hint == HINT_UNSUPPORTED) {
                 hintText = WatchUi.loadResource(Rez.Strings.barcodeUnsupportedChars) as String;
+            } else if (hint == HINT_QR_NO_MEMORY) {
+                hintText = WatchUi.loadResource(Rez.Strings.barcodeQrNoMemory) as String;
             }
             hintLines = TextLayout.wrapLines(dc, hintText, textW, tiny);
         }

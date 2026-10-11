@@ -51,5 +51,6 @@
   <string id="docTypeGeneric">Code 39 (vain lyhyet koodit)</string>
   <string id="barcodeTooLong">Liian pitkä viivoille - käytä QR</string>
   <string id="barcodeUnsupportedChars">Merkit eivät käy viivoille - käytä QR</string>
+  <string id="barcodeQrNoMemory">QR ei käytettävissä tässä kellossa</string>
   <string id="pressStart">Paina START</string>
 </strings>

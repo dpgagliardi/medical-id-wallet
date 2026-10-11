@@ -51,5 +51,6 @@
   <string id="docTypeGeneric">Code 39 (только короткие коды)</string>
   <string id="barcodeTooLong">Слишком длинный - используйте QR</string>
   <string id="barcodeUnsupportedChars">Недопустимые символы - используйте QR</string>
+  <string id="barcodeQrNoMemory">QR недоступен на этих часах</string>
   <string id="pressStart">Нажмите START</string>
 </strings>
