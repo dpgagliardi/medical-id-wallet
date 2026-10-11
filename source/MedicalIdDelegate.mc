@@ -40,8 +40,12 @@ class MedicalIdDelegate extends WatchUi.BehaviorDelegate {
     //! each one covered the same distance regardless of screen size. Scaling
     //! to screen height keeps a swipe's coverage proportional across the
     //! wide range of Garmin displays (fr235 ~215px tall vs Venu 4 ~454px).
+    //! Only a fallback now: scrolling normally stops on field boundaries
+    //! (MedicalIdModel.scrollTowardEnd/Start) and uses this step only inside
+    //! a single field taller than the screen, where 70% keeps a few lines of
+    //! overlap for context.
     private function scrollStep() as Number {
-        return (System.getDeviceSettings().screenHeight * 0.45).toNumber();
+        return (System.getDeviceSettings().screenHeight * 0.7).toNumber();
     }
 
     //! START/ENTER on the base view opens the scrollable view. Returning
@@ -59,12 +63,12 @@ class MedicalIdDelegate extends WatchUi.BehaviorDelegate {
         var key = keyEvent.getKey();
 
         if (key == WatchUi.KEY_DOWN) {
-            model.scrollUp(scrollStep());
+            model.scrollTowardEnd(scrollStep());
             WatchUi.requestUpdate();
             return true;
         }
         if (key == WatchUi.KEY_UP) {
-            model.scrollDown(scrollStep());
+            model.scrollTowardStart(scrollStep());
             WatchUi.requestUpdate();
             return true;
         }
@@ -84,12 +88,12 @@ class MedicalIdDelegate extends WatchUi.BehaviorDelegate {
         var direction = swipeEvent.getDirection();
 
         if (direction == WatchUi.SWIPE_UP) {
-            model.scrollUp(scrollStep());
+            model.scrollTowardEnd(scrollStep());
             WatchUi.requestUpdate();
             return true;
         }
         if (direction == WatchUi.SWIPE_DOWN) {
-            model.scrollDown(scrollStep());
+            model.scrollTowardStart(scrollStep());
             WatchUi.requestUpdate();
             return true;
         }

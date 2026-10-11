@@ -50,5 +50,6 @@
   <string id="docTypeQR">Seguro Médico / QR Salud</string>
   <string id="docTypeGeneric">Code 39 (solo códigos cortos)</string>
   <string id="barcodeTooLong">Muy largo para barras - usa QR</string>
+  <string id="barcodeUnsupportedChars">Caracteres no válidos para barras - usa QR</string>
   <string id="pressStart">Pulsa START</string>
 </strings>
