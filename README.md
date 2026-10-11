@@ -107,7 +107,7 @@ project, in spare time.
 
 - **Bugs and suggestions:** open an [issue](https://github.com/dpgagliardi/medical-id-wallet/issues).
 - **Security problems:** privately, as described in [Reporting a security problem](#reporting-a-security-problem).
-- **Anything else:** skapacraftlabs@gmail.com
+- **Anything else:** dpgagliardi.dev@gmail.com
 
 ## Trademarks
 
