@@ -42,6 +42,17 @@ class MedicalIdView extends WatchUi.View {
         var backlightOn = false;
         try {
             backlightOn = drawMainScreen(dc);
+            // Watches with a subscreen: the band from the top edge down to
+            // the subscreen's bottom stays empty. Scroll stops put every
+            // field below it, so only the tail of the previous field ever
+            // lands there, and on the watch the subscreen's frame would cut
+            // those lines in half ("ORGAN DO_OR:"). Blanking the full width
+            // reads as a top margin rather than as text with a hole in it.
+            var subBottom = barcodeRenderer.subscreenBottom();
+            if (subBottom > 0 && model.hasData()) {
+                dc.setColor(COLOR_BLACK, COLOR_BLACK);
+                dc.fillRectangle(0, 0, dc.getWidth(), subBottom);
+            }
         } catch (ex) {
             // Render aborted partway through: avoid leaving a stuck black
             // frame; reset scroll so the next update starts from a known-good state.

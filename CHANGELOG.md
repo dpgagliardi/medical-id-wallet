@@ -27,7 +27,9 @@ published, so their history starts at the 1.0.2 entry below.
   Descent G1), the barcode was centred with its top-right corner behind the
   subscreen, where the real watch hides part of it under the subscreen's
   frame. The code now stops just below the subscreen and is sized to fit,
-  and every scroll stop starts below it.
+  and every scroll stop starts below it. The band beside the subscreen is
+  kept empty, so the end of the previous field no longer shows cut in half
+  by its frame.
 
 ### Changed
 - Licence: added a NOTICE file with additional terms under section 7 of the
