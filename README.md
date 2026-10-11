@@ -119,10 +119,12 @@ the platform this software runs on.
 
 Copyright (C) 2026 Daniele Gagliardi. GPL-3.0-or-later, see [LICENSE](LICENSE).
 
-Under section 7(b) of the GPL, [NOTICE](NOTICE) adds one requirement: keep the
-author attribution. Copies of the source keep NOTICE and the file headers, and
-a derived app that shows an About, credits or licence screen credits the
-original project there.
+[NOTICE](NOTICE) adds two terms the GPL allows in section 7. Under 7(b), the
+author attribution stays: copies of the source keep NOTICE and the file
+headers, and a derived app that shows an About, credits or licence screen
+credits the original project there. Under 7(c), a modified version must not
+pass itself off as the original: it cannot be called Medical ID Wallet, in the
+app or in a store listing, nor use this project's icon.
 
 Any modified version you distribute must stay under GPLv3, and its source must
 be made available to whoever receives it. For an application whose promise is

@@ -11,10 +11,12 @@ published, so their history starts at the 1.0.2 entry below.
 ## [Unreleased]
 
 ### Changed
-- Licence: added a NOTICE file with an additional term under section 7(b) of
-  the GPL version 3, requiring that the author attribution be preserved in
-  the source and in any About, credits or licence screen of a derived app.
-  The licence stays GPL-3.0-or-later.
+- Licence: added a NOTICE file with additional terms under section 7 of the
+  GPL version 3. Under 7(b), the author attribution must be preserved in the
+  source and in any About, credits or licence screen of a derived app. Under
+  7(c), a modified version must not present itself as the original, so it
+  cannot use the Medical ID Wallet name or icon. The licence stays
+  GPL-3.0-or-later.
 
 ## [1.1.0] - 2026-10-11
 
