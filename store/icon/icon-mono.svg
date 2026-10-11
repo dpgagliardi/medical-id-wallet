@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Variant for 1-bit displays (Instinct family, palette black/white
+       only): the red disc would threshold unpredictably, so the card alone
+       is drawn white with the heart and lines cut out in black. -->
+  <rect x="4" y="18" width="92" height="64" rx="11" fill="#FFFFFF"/>
+  <path d="M30 70 C12 57 12 40 22 38.5 C26.5 38 30 41 30 44 C30 41 33.5 38 38 38.5 C48 40 48 57 30 70Z" fill="#000000"/>
+  <rect x="54" y="38" width="32" height="9" rx="4.5" fill="#000000"/>
+  <rect x="54" y="54" width="22" height="9" rx="4.5" fill="#000000"/>
+</svg>

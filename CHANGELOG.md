@@ -8,6 +8,18 @@ here is the one in `manifest.xml`, which is what the Connect IQ Store publishes.
 Versions 1.0.1 and 1.0.2 were store iterations made before this repository was
 published, so their history starts at the 1.0.2 entry below.
 
+## [Unreleased]
+
+### Changed
+- New launcher icon: an ID card with a heart on a red disc, drawn as bold
+  shapes that stay legible down to 26px. It replaces a detailed card
+  illustration that turned to mush at watch size and still carried the logo
+  of the organization the project used to live under.
+- One launcher icon PNG per size the devices actually ask for (17 sizes,
+  26x26 to 70x70), generated from SVG masters by `store/icon/build_icons.py`,
+  instead of a single 48x48 PNG the compiler rescaled for every device. The
+  1-bit Instinct models get a dedicated black and white variant.
+
 ## [1.0.4] - 2026-09-16
 
 ### Removed
