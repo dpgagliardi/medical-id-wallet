@@ -20,6 +20,17 @@ published, so their history starts at the 1.0.2 entry below.
   instead of a single 48x48 PNG the compiler rescaled for every device. The
   1-bit Instinct models get a dedicated black and white variant.
 
+- Compact profile layout: each field reads "LABEL: value" on one line
+  instead of a label line over a value line, the name fits on one line when
+  it can, and the blood type label sits beside its box. Wearers reported
+  needing too many DOWN presses to reach the end of a full profile. Phone
+  numbers, IDs and dates are never split between words: when one does not fit
+  beside its label it moves to its own line, whole.
+- Scrolling stops on field boundaries instead of moving a fixed 45% of the
+  screen: each DOWN brings the first field not fully shown to the top, so no
+  line, number or code is left cut by the screen edge, and the barcode stop
+  centres the code on screen. Fewer presses are needed as a result.
+
 ### Fixed
 - A Code 39 barcode silently left out any character the symbology lacks
   (`_`, `#`, accented letters), so a scanner read back a different value from

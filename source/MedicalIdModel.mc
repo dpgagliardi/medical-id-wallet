@@ -81,15 +81,55 @@ class MedicalIdModel {
         maxScroll = v > 0 ? v : 0;
         if (scrollOffset > maxScroll) { scrollOffset = maxScroll; }
     }
-    //! Moves toward the end of the profile (content slides up).
-    function scrollTowardEnd(step as Number) as Void {
-        var next = scrollOffset + step;
-        scrollOffset = next <= maxScroll ? next : maxScroll;
+    //! Where scrolling may stop, as published by the view on every frame:
+    //! stopOffsets[i] is the scroll offset that brings block i to the top of
+    //! the screen (or, for the barcode, centres it) and blockBottoms[i] is
+    //! that block's bottom edge, both in content coordinates. A fixed pixel
+    //! step knew nothing about where fields end, so it routinely left a line,
+    //! a phone number or half a QR code cut by the screen edge.
+    private var stopOffsets  as Array<Number> = [] as Array<Number>;
+    private var blockBottoms as Array<Number> = [] as Array<Number>;
+    private var viewHeight   as Number = 0;
+    private var bottomPad    as Number = 0;
+    private var topMargin    as Number = 0;
+
+    function setScrollStops(stops as Array<Number>, bottoms as Array<Number>,
+                            viewH as Number, pad as Number, margin as Number) as Void {
+        stopOffsets  = stops;
+        blockBottoms = bottoms;
+        viewHeight   = viewH;
+        bottomPad    = pad;
+        topMargin    = margin;
     }
-    //! Moves back toward the top of the profile.
-    function scrollTowardStart(step as Number) as Void {
-        var next = scrollOffset - step;
-        scrollOffset = next >= 0 ? next : 0;
+
+    //! Moves toward the end of the profile: the first block not entirely on
+    //! screen becomes the first one shown. fallbackStep is used only when no
+    //! stop moves forward, i.e. inside a single block taller than the screen.
+    function scrollTowardEnd(fallbackStep as Number) as Void {
+        var limit = scrollOffset + viewHeight - bottomPad;
+        var target = scrollOffset + fallbackStep;
+        for (var i = 0; i < stopOffsets.size(); i++) {
+            if (blockBottoms[i] > limit) {
+                if (stopOffsets[i] > scrollOffset) { target = stopOffsets[i]; }
+                break;
+            }
+        }
+        scrollOffset = target <= maxScroll ? target : maxScroll;
+    }
+
+    //! Moves back toward the top: goes as far back as it can while the block
+    //! that was at the top stays on screen, landing on a block boundary.
+    function scrollTowardStart(fallbackStep as Number) as Void {
+        var reach  = viewHeight - bottomPad - topMargin;
+        var target = scrollOffset - fallbackStep;
+        for (var i = 0; i < stopOffsets.size(); i++) {
+            var stop = stopOffsets[i];
+            if (stop < scrollOffset && stop >= scrollOffset - reach) {
+                target = stop;
+                break;
+            }
+        }
+        scrollOffset = target >= 0 ? target : 0;
     }
 
     function loadSettings() as Void {

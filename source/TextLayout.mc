@@ -50,6 +50,27 @@ module TextLayout {
         return lines;
     }
 
+    //! Lines for a value that must not be split between words: a phone
+    //! number or an ID broken at a space reads as two separate values (and a
+    //! responder may dial only the first half). Returned whole when it fits,
+    //! otherwise broken by character only, as late as possible.
+    function wrapAtomic(dc as Dc, text as String, maxW as Number,
+                        font as FontType) as Array<String> {
+        if (dc.getTextWidthInPixels(text, font) <= maxW) { return [text] as Array<String>; }
+        var lines = [] as Array<String>;
+        var rest  = text;
+        while (rest.length() > 0) {
+            var fit = 1;
+            while (fit < rest.length() && dc.getTextWidthInPixels(
+                    rest.substring(0, fit + 1) as String, font) <= maxW) {
+                fit++;
+            }
+            lines.add(rest.substring(0, fit) as String);
+            rest = rest.substring(fit, rest.length()) as String;
+        }
+        return lines;
+    }
+
     function splitWords(text as String) as Array<String> {
         var words     = [] as Array<String>;
         var remaining = text;
