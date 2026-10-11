@@ -1,7 +1,7 @@
 # Privacy Policy - Medical ID Wallet
 
 **Developer:** Daniele Gagliardi
-**Contact:** skapacraftlabs@gmail.com
+**Contact:** dpgagliardi.dev@gmail.com
 **Last updated:** 3 October 2026
 
 ## The short version
@@ -65,4 +65,4 @@ Not affiliated with, endorsed by or sponsored by Garmin Ltd. Garmin and Connect 
 
 ## Contact
 
-For questions about this privacy policy: skapacraftlabs@gmail.com
+For questions about this privacy policy: dpgagliardi.dev@gmail.com
