@@ -23,6 +23,11 @@ published, so their history starts at the 1.0.2 entry below.
   screen redraw, which on slower watches such as the Forerunner 55 tripped
   the watchdog and closed the app. An empty panel of the final size shows
   for a fraction of a second while it is built.
+- On watches with a subscreen (Instinct 2/2S/2X/Crossover/3 Solar/E,
+  Descent G1), the barcode was centred with its top-right corner behind the
+  subscreen, where the real watch hides part of it under the subscreen's
+  frame. The code now stops just below the subscreen and is sized to fit,
+  and every scroll stop starts below it.
 
 ### Changed
 - Licence: added a NOTICE file with additional terms under section 7 of the

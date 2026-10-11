@@ -161,14 +161,43 @@ class BarcodeRenderer {
     //! Code39 (simple, reliable) cover the practical cases.
     //! Always returns the bottom Y of the section (including bottom padding)
     //! whether or not it was actually drawn, so scroll extents stay correct.
+    //! reservedAbove: height of what the view draws right above the panel
+    //! (the code label), which must fit on screen together with it.
     function drawBarcodeAt(dc as Dc, docType as Number, text as String,
-                            topY as Number, screenH as Number) as Number {
+                            topY as Number, screenH as Number,
+                            reservedAbove as Number) as Number {
         lastBarcodeVisible = false;
+        // Below a subscreen, the panel and its label share what is left of
+        // the screen height; see subscreenBottom().
+        var sub = subscreenBottom();
+        maxPanelH = sub > 0 ? screenH - sub - reservedAbove - 6 : screenH;
         switch (docType) {
             case 1: return drawQrAt(dc, text, topY, screenH);
             case 2: return drawCode39At(dc, text, topY, screenH);
             default: return topY;
         }
+    }
+
+    // Tallest panel that fits on screen with its label (set per call by
+    // drawBarcodeAt).
+    private var maxPanelH as Number = 0;
+
+    //! Bottom edge of the subscreen (the small separate round display in
+    //! the top-right corner of the Instinct 2/2S/2X/Crossover/3 Solar/E and
+    //! Descent G1), or 0 on watches without one. Content drawn in its
+    //! bounding box is partly hidden by the subscreen's frame and corners on
+    //! the real watch, which in the simulator is easy to miss: a QR centred
+    //! on an Instinct 2 had its top-right finder pattern under it, and a code
+    //! missing a finder pattern often does not scan. The view stops the
+    //! barcode block just below this edge, and the panel is sized to fit.
+    function subscreenBottom() as Number {
+        if (WatchUi has :getSubscreen) {
+            var box = WatchUi.getSubscreen();
+            if (box != null) {
+                return (box as Graphics.BoundingBox).y + (box as Graphics.BoundingBox).height;
+            }
+        }
+        return 0;
     }
 
     //! Calculate safe square size for QR on round displays.
@@ -179,10 +208,9 @@ class BarcodeRenderer {
         var w = dc.getWidth();
         var h = dc.getHeight();
         var base = w < h ? w : h;
-        if (shape == System.SCREEN_SHAPE_ROUND) {
-            return (base * 0.70).toNumber();
-        }
-        return (base * 0.85).toNumber();
+        var size = (shape == System.SCREEN_SHAPE_ROUND)
+            ? (base * 0.70).toNumber() : (base * 0.85).toNumber();
+        return size < maxPanelH ? size : maxPanelH;
     }
 
     //! QR code renderer (medical insurance / digital health).
@@ -754,6 +782,9 @@ class BarcodeRenderer {
         var fullWidth  = dc.getWidth();
         var innerWidth = fullWidth - (2 * SIDE_MARGIN);
         var barH       = dc.getHeight() / 2;
+        // Panel is barH + textH + 20 tall; shrink the bars, not the text,
+        // when that would not fit below a subscreen.
+        if (barH + textH + 20 > maxPanelH) { barH = maxPanelH - textH - 20; }
 
         var totalUnits = (payload.length() * CHAR_UNITS) - 1 + (2 * QUIET_UNITS);
         var unit = innerWidth / totalUnits;
