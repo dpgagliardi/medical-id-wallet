@@ -8,7 +8,7 @@ here is the one in `manifest.xml`, which is what the Connect IQ Store publishes.
 Versions 1.0.1 and 1.0.2 were store iterations made before this repository was
 published, so their history starts at the 1.0.2 entry below.
 
-## [Unreleased]
+## [1.1.1] - 2026-10-11
 
 ### Fixed
 - QR codes now work on watches whose widgets get 64 KB of memory
