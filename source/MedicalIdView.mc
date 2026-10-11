@@ -110,21 +110,7 @@ class MedicalIdView extends WatchUi.View {
         // plus a third line suggesting the minimum recommended fields so a
         // first-time user isn't left guessing where to start.
         if (!model.hasData()) {
-            dc.setColor(COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
-            dc.drawText(centerX, height / 2 - 40, Graphics.FONT_SMALL,
-                WatchUi.loadResource(Rez.Strings.noData) as String,
-                Graphics.TEXT_JUSTIFY_CENTER);
-            dc.setColor(COLOR_GREY, Graphics.COLOR_TRANSPARENT);
-            dc.drawText(centerX, height / 2 - 5, Graphics.FONT_XTINY,
-                WatchUi.loadResource(Rez.Strings.openConnectMobile) as String,
-                Graphics.TEXT_JUSTIFY_CENTER);
-            dc.drawText(centerX, height / 2 + 12, Graphics.FONT_XTINY,
-                WatchUi.loadResource(Rez.Strings.setupProfileHint) as String,
-                Graphics.TEXT_JUSTIFY_CENTER);
-            dc.setColor(COLOR_RED_NEON, Graphics.COLOR_TRANSPARENT);
-            dc.drawText(centerX, height / 2 + 34, Graphics.FONT_XTINY,
-                WatchUi.loadResource(Rez.Strings.minimumFieldsHint) as String,
-                Graphics.TEXT_JUSTIFY_CENTER);
+            drawEmptyState(dc);
             return false;
         }
 
@@ -342,6 +328,42 @@ class MedicalIdView extends WatchUi.View {
         return barcodeVisible;
     }
 
+    //! Empty state: no data configured yet. The lines used to sit at fixed
+    //! offsets from the centre (-40, -5, +12, +34 px) whatever the font size,
+    //! so on high-resolution AMOLED screens, where FONT_XTINY alone is taller
+    //! than those gaps, they overlapped; and unwrapped, the longer
+    //! translations ran under the bezel. Now each line is wrapped and the
+    //! block is stacked by real font height, then centred as a whole.
+    private function drawEmptyState(dc as Dc) as Void {
+        var width   = dc.getWidth();
+        var centerX = width / 2;
+        var maxW    = width * 3 / 4;
+        var tiny    = Graphics.FONT_XTINY;
+        var small   = Graphics.FONT_SMALL;
+        var texts = [
+            WatchUi.loadResource(Rez.Strings.noData) as String,
+            WatchUi.loadResource(Rez.Strings.openConnectMobile) as String,
+            WatchUi.loadResource(Rez.Strings.setupProfileHint) as String,
+            WatchUi.loadResource(Rez.Strings.minimumFieldsHint) as String
+        ] as Array<String>;
+        var fonts  = [small, tiny, tiny, tiny] as Array<FontType>;
+        var colors = [COLOR_WHITE, COLOR_GREY, COLOR_GREY, COLOR_RED_NEON] as Array<Number>;
+        // Gap after each block: a wider one separates the title from the hints.
+        var gaps   = [8, 0, 6, 0] as Array<Number>;
+
+        var blockH = 0;
+        for (var i = 0; i < texts.size(); i++) {
+            blockH += TextLayout.wrapLines(dc, texts[i], maxW, fonts[i]).size()
+                      * dc.getFontHeight(fonts[i]) + gaps[i];
+        }
+        var y = (dc.getHeight() - blockH) / 2;
+        for (var i = 0; i < texts.size(); i++) {
+            dc.setColor(colors[i], Graphics.COLOR_TRANSPARENT);
+            y += TextLayout.drawWrapped(dc, texts[i], centerX, y, maxW, fonts[i])
+                 * dc.getFontHeight(fonts[i]) + gaps[i];
+        }
+    }
+
     //! "Jane Doe (Spouse) +1 555 0101": a bare phone number tells a
     //! responder nothing about who to call or why; name + relationship do.
     private function contactDisplayLine(name as String?, relation as String?,
@@ -361,72 +383,10 @@ class MedicalIdView extends WatchUi.View {
         }
     }
 
-    //! Splits text into the lines that will actually be rendered.
-    //! Single source of truth for drawing and for height measurement: these
-    //! were two separate implementations, and the measuring one hardcoded
-    //! FONT_XTINY regardless of the font it was given; any divergence
-    //! between them silently offset every field below it.
-    //! A word wider than maxW is broken character-by-character rather than
-    //! drawn past the screen edge: a long unbroken medication or allergen
-    //! name used to have its tail clipped away with no indication.
-    private function wrapLines(dc as Dc, text as String, maxW as Number,
-                                font as FontType) as Array<String> {
-        var lines = [] as Array<String>;
-        var words = splitWords(text);
-        var line  = "";
-        for (var i = 0; i < words.size(); i++) {
-            var w = words[i];
-            while (dc.getTextWidthInPixels(w, font) > maxW && w.length() > 1) {
-                var fit = 1;
-                while (fit < w.length() && dc.getTextWidthInPixels(
-                        w.substring(0, fit + 1) as String, font) <= maxW) {
-                    fit++;
-                }
-                if (line.length() > 0) { lines.add(line); line = ""; }
-                lines.add(w.substring(0, fit) as String);
-                w = w.substring(fit, w.length()) as String;
-            }
-            var test = line.length() == 0 ? w : line + " " + w;
-            if (dc.getTextWidthInPixels(test, font) > maxW && line.length() > 0) {
-                lines.add(line);
-                line = w;
-            } else {
-                line = test;
-            }
-        }
-        if (line.length() > 0) { lines.add(line); }
-        return lines;
-    }
-
-    private function splitWords(text as String) as Array<String> {
-        var words     = [] as Array<String>;
-        var remaining = text;
-        while (remaining.length() > 0) {
-            var idx = remaining.find(" ");
-            if (idx == null) {
-                words.add(remaining);
-                remaining = "";
-            } else {
-                var w = remaining.substring(0, idx) as String;
-                if (w.length() > 0) { words.add(w); }
-                remaining = remaining.substring(idx + 1, remaining.length()) as String;
-            }
-        }
-        return words;
-    }
-
-    //! Draws the text wrapped and returns how many lines it occupied, so the
-    //! caller can advance yPos without wrapping the same text a second time.
     private function drawWrappedText(dc as Dc, text as String, cx as Number,
                                      y as Number, maxW as Number,
                                      font as FontType) as Number {
-        var lines = wrapLines(dc, text, maxW, font);
-        var lineH = dc.getFontHeight(font);
-        for (var i = 0; i < lines.size(); i++) {
-            dc.drawText(cx, y, font, lines[i] as String, Graphics.TEXT_JUSTIFY_CENTER);
-            y += lineH;
-        }
-        return lines.size();
+        return TextLayout.drawWrapped(dc, text, cx, y, maxW, font);
     }
 
     //! The base view and the pushed view share one model, so the scroll

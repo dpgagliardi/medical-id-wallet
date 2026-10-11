@@ -89,6 +89,7 @@ class BarcodeRenderer {
     private const HINT_NONE        = 0;  // nothing useful to suggest
     private const HINT_USE_QR      = 1;  // Code 39 cannot fit this value
     private const HINT_QR_TOO_LONG = 2;  // value exceeds QR version 4 capacity
+    private const HINT_UNSUPPORTED = 3;  // value has characters Code 39 lacks
 
     // Horizontal inset on round displays so bars and white panel stay inside
     // the circular mask. On rectangular displays this is just padding.
@@ -589,8 +590,13 @@ class BarcodeRenderer {
                            screenH as Number) as Number {
         var textH = dc.getFontHeight(Graphics.FONT_XTINY);
         var data  = filterCode39(text);
-        if (data.length() == 0) {
-            return drawTextFallbackAt(dc, text, topY, screenH, HINT_USE_QR);
+        // Characters Code 39 has no symbol for ('_', '#', accented letters,
+        // '*') used to be dropped silently, so the bars encoded a different
+        // value from the real ID and a scanner read back the wrong number
+        // with nothing on screen to say so. Any value that does not survive
+        // the filter intact is now shown as text, with a hint to use QR.
+        if (data.length() == 0 || !data.equals(text.toUpper())) {
+            return drawTextFallbackAt(dc, text, topY, screenH, HINT_UNSUPPORTED);
         }
         var payload = "*" + data + "*";
 
@@ -666,53 +672,64 @@ class BarcodeRenderer {
         return result;
     }
 
-    //! White panel with large text, used when bars would be sub-pixel wide.
-    //! hint: one of HINT_*. "Switch to QR" is only meaningful on the Code 39
-    //! paths: when QR itself is what failed, the user is already using it, so
-    //! that path gets its own message (or none, when there is nothing
-    //! actionable to say).
+    //! White panel with the value as text, used when no scannable code can
+    //! be drawn. hint: one of HINT_*. "Switch to QR" is only meaningful on
+    //! the Code 39 paths: when QR itself is what failed, the user is already
+    //! using it, so that path gets its own message (or none, when there is
+    //! nothing actionable to say).
     private function drawTextFallbackAt(dc as Dc, text as String,
                                         topY as Number, screenH as Number,
                                         hint as Number) as Number {
         var fullWidth  = dc.getWidth();
         var innerWidth = fullWidth - (2 * SIDE_MARGIN);
-        var panelH     = dc.getHeight() / 2;
+        var textW      = innerWidth - 12;
+        var tiny       = Graphics.FONT_XTINY;
+
+        // FONT_SMALL when the value fits on one line, otherwise FONT_XTINY
+        // wrapped over as many lines as it needs. It used to be drawn on a
+        // single line whatever its length, and a barcode override can be 255
+        // characters (QR stops at 120), so most of it ran off the panel.
+        var font  = Graphics.FONT_SMALL;
+        var lines = [text] as Array<String>;
+        if (dc.getTextWidthInPixels(text, font) > textW) {
+            font  = tiny;
+            lines = TextLayout.wrapLines(dc, text, textW, font);
+        }
+        var hintLines = [] as Array<String>;
+        if (hint != HINT_NONE) {
+            var hintText = WatchUi.loadResource(Rez.Strings.barcodeTooLong) as String;
+            if (hint == HINT_QR_TOO_LONG) {
+                hintText = WatchUi.loadResource(Rez.Strings.barcodeTooLongQr) as String;
+            } else if (hint == HINT_UNSUPPORTED) {
+                hintText = WatchUi.loadResource(Rez.Strings.barcodeUnsupportedChars) as String;
+            }
+            hintLines = TextLayout.wrapLines(dc, hintText, textW, tiny);
+        }
+
+        var fontH  = dc.getFontHeight(font);
+        var tinyH  = dc.getFontHeight(tiny);
+        var blockH = (lines.size() * fontH) + (hintLines.size() * tinyH);
+        // At least half the screen, as before, but tall enough for the block.
+        var panelH = dc.getHeight() / 2;
+        if (blockH + 24 > panelH) { panelH = blockH + 24; }
         if (!checkVisible(topY, panelH, screenH)) {
             return topY + panelH + 60;
         }
         dc.setColor(0xFFFFFF, Graphics.COLOR_TRANSPARENT);
         dc.fillRectangle(SIDE_MARGIN, topY, innerWidth, panelH);
 
-        // Step down through the font sizes until the value fits inside the
-        // panel. It was always drawn at FONT_SMALL, so a full-length national
-        // ID ran edge to edge and past the panel, and this path now handles
-        // every barcode that is too dense to be scannable, so it has to stay
-        // readable for the longest ID the settings allow (32 characters).
-        var font    = Graphics.FONT_SMALL;
-        var textPad = 12;
-        var fonts   = [Graphics.FONT_SMALL, Graphics.FONT_XTINY] as Array<FontType>;
-        for (var i = 0; i < fonts.size(); i++) {
-            font = fonts[i] as FontType;
-            if (dc.getTextWidthInPixels(text, font) <= innerWidth - textPad) { break; }
-        }
-
-        var showHint = (hint != HINT_NONE);
-        var fontH = dc.getFontHeight(font);
-        var hintH = showHint ? dc.getFontHeight(Graphics.FONT_XTINY) : 0;
-        // Centre the value and hint together as one block, so the value does
+        // Value and hint centred together as one block, so the value does
         // not sit visually off-centre once the hint is added below it.
-        var blockY = topY + (panelH - (fontH + hintH)) / 2;
-
+        var y = topY + (panelH - blockH) / 2;
         dc.setColor(0x000000, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(fullWidth / 2, blockY, font, text, Graphics.TEXT_JUSTIFY_CENTER);
-
-        if (showHint) {
-            var hintText = (hint == HINT_QR_TOO_LONG)
-                ? WatchUi.loadResource(Rez.Strings.barcodeTooLongQr) as String
-                : WatchUi.loadResource(Rez.Strings.barcodeTooLong) as String;
-            dc.setColor(0x555555, Graphics.COLOR_TRANSPARENT);
-            dc.drawText(fullWidth / 2, blockY + fontH, Graphics.FONT_XTINY,
-                        hintText, Graphics.TEXT_JUSTIFY_CENTER);
+        for (var i = 0; i < lines.size(); i++) {
+            dc.drawText(fullWidth / 2, y, font, lines[i], Graphics.TEXT_JUSTIFY_CENTER);
+            y += fontH;
+        }
+        dc.setColor(0x555555, Graphics.COLOR_TRANSPARENT);
+        for (var i = 0; i < hintLines.size(); i++) {
+            dc.drawText(fullWidth / 2, y, tiny, hintLines[i], Graphics.TEXT_JUSTIFY_CENTER);
+            y += tinyH;
         }
         return topY + panelH + 60;
     }

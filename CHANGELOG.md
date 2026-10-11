@@ -20,6 +20,20 @@ published, so their history starts at the 1.0.2 entry below.
   instead of a single 48x48 PNG the compiler rescaled for every device. The
   1-bit Instinct models get a dedicated black and white variant.
 
+### Fixed
+- A Code 39 barcode silently left out any character the symbology lacks
+  (`_`, `#`, accented letters), so a scanner read back a different value from
+  the real ID. Such a value is now shown as text, with a hint to switch to QR.
+- The text shown in place of a barcode was drawn on a single line and a long
+  override code ran off the panel. It now wraps, and the panel grows to fit.
+- The "no data" screen placed its lines at fixed pixel offsets, so they
+  overlapped on high-resolution screens and long translations ran under the
+  bezel. Lines now wrap and stack by real font height.
+- Shortening the profile from the phone while scrolled to the bottom left a
+  blank screen until the next scroll; the offset is now pulled back in range.
+- The cleanup of the legacy on-device copy of the profile ran on every
+  launch and settings change. It now runs once per install.
+
 ## [1.0.4] - 2026-09-16
 
 ### Removed

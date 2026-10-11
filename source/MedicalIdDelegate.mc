@@ -59,12 +59,12 @@ class MedicalIdDelegate extends WatchUi.BehaviorDelegate {
         var key = keyEvent.getKey();
 
         if (key == WatchUi.KEY_DOWN) {
-            model.scrollUp(scrollStep());
+            model.scrollTowardEnd(scrollStep());
             WatchUi.requestUpdate();
             return true;
         }
         if (key == WatchUi.KEY_UP) {
-            model.scrollDown(scrollStep());
+            model.scrollTowardStart(scrollStep());
             WatchUi.requestUpdate();
             return true;
         }
@@ -84,12 +84,12 @@ class MedicalIdDelegate extends WatchUi.BehaviorDelegate {
         var direction = swipeEvent.getDirection();
 
         if (direction == WatchUi.SWIPE_UP) {
-            model.scrollUp(scrollStep());
+            model.scrollTowardEnd(scrollStep());
             WatchUi.requestUpdate();
             return true;
         }
         if (direction == WatchUi.SWIPE_DOWN) {
-            model.scrollDown(scrollStep());
+            model.scrollTowardStart(scrollStep());
             WatchUi.requestUpdate();
             return true;
         }

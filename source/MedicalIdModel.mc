@@ -35,6 +35,8 @@ class MedicalIdModel {
     private const PROP_DATE_OF_BIRTH = "dateOfBirth";
     private const PROP_DONOR_STATUS  = "donorStatus";
     private const PROP_DOC_TYPE     = "docType";
+    // Marker, not data: records that the legacy Storage copy was purged.
+    private const STORAGE_LEGACY_PURGED = "legacyPurged";
 
     private var firstName   as String?;
     private var lastName    as String?;
@@ -71,12 +73,21 @@ class MedicalIdModel {
 
     function getScrollOffset() as Number { return scrollOffset; }
     function setScrollOffset(offset as Number) as Void { scrollOffset = offset; }
-    function setMaxScroll(v as Number) as Void { maxScroll = v > 0 ? v : 0; }
-    function scrollUp(step as Number) as Void {
+    //! Also pulls the current offset back inside the new range: when a
+    //! settings change shortens the profile while the wearer is scrolled to
+    //! the bottom, the old offset pointed past the end and the screen stayed
+    //! blank until they scrolled back up.
+    function setMaxScroll(v as Number) as Void {
+        maxScroll = v > 0 ? v : 0;
+        if (scrollOffset > maxScroll) { scrollOffset = maxScroll; }
+    }
+    //! Moves toward the end of the profile (content slides up).
+    function scrollTowardEnd(step as Number) as Void {
         var next = scrollOffset + step;
         scrollOffset = next <= maxScroll ? next : maxScroll;
     }
-    function scrollDown(step as Number) as Void {
+    //! Moves back toward the top of the profile.
+    function scrollTowardStart(step as Number) as Void {
         var next = scrollOffset - step;
         scrollOffset = next >= 0 ? next : 0;
     }
@@ -136,6 +147,12 @@ class MedicalIdModel {
         // exist below it. Devices that old never had the mirrored copy
         // this purges in the first place, so there's nothing to do.
         if (!(Toybox.Application has :Storage)) { return; }
+        // Done once per install: it used to rerun on every launch and every
+        // settings change, issuing 14 deletes each time for keys that were
+        // already gone after the first pass.
+        try {
+            if (Application.Storage.getValue(STORAGE_LEGACY_PURGED) == true) { return; }
+        } catch (ex) {}
         var legacyKeys = [
             PROP_FIRST_NAME, PROP_LAST_NAME, PROP_BLOOD_TYPE, PROP_ICE_CONTACT1,
             PROP_ICE_CONTACT2, PROP_HEIGHT, PROP_WEIGHT, PROP_MEDICATIONS,
@@ -145,6 +162,7 @@ class MedicalIdModel {
         for (var i = 0; i < legacyKeys.size(); i++) {
             try { Application.Storage.deleteValue(legacyKeys[i]); } catch (ex) {}
         }
+        try { Application.Storage.setValue(STORAGE_LEGACY_PURGED, true); } catch (ex) {}
     }
 
     private function numberValue(value as Object?, defaultValue as Number) as Number {
