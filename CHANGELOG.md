@@ -10,6 +10,16 @@ published, so their history starts at the 1.0.2 entry below.
 
 ## [Unreleased]
 
+### Fixed
+- QR codes now work on watches whose widgets get 64 KB of memory
+  (Forerunner 55, Instinct 2/2X/2S, Forerunner 245 and others), about a
+  quarter of installs according to the Connect IQ Store statistics. They used
+  to show the value as plain text with no explanation, because of a fixed
+  memory threshold sized for an encoder that stored every module as a
+  separate object. The encoder now keeps its data in byte arrays, producing
+  identical codes in a fraction of the memory, and checks the memory actually
+  free. When a QR still cannot be drawn, the screen now says so.
+
 ### Changed
 - Licence: added a NOTICE file with additional terms under section 7 of the
   GPL version 3. Under 7(b), the author attribution must be preserved in the

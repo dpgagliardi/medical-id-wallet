@@ -51,5 +51,6 @@
   <string id="docTypeGeneric">Code 39 (pouze krátké kódy)</string>
   <string id="barcodeTooLong">Příliš dlouhé pro čárky - použijte QR</string>
   <string id="barcodeUnsupportedChars">Znaky nelze použít v čárkách - použijte QR</string>
+  <string id="barcodeQrNoMemory">QR na těchto hodinkách není k dispozici</string>
   <string id="pressStart">Stiskněte START</string>
 </strings>

@@ -51,5 +51,6 @@
   <string id="docTypeGeneric">Code 39 (yalnızca kısa kodlar)</string>
   <string id="barcodeTooLong">Çubuklar için çok uzun - QR kullanın</string>
   <string id="barcodeUnsupportedChars">Çubuklar için geçersiz karakter - QR kullanın</string>
+  <string id="barcodeQrNoMemory">Bu saatte QR kullanılamıyor</string>
   <string id="pressStart">START'a basın</string>
 </strings>
