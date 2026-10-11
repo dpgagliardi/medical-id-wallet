@@ -1,5 +1,6 @@
 # Copyright (C) 2026 Daniele Gagliardi
 # SPDX-License-Identifier: GPL-3.0-or-later
+# Additional attribution terms (GPL-3.0 section 7(b)): see NOTICE.
 
 # Monkey C has no package manager, so there is one dependency graph worth
 # watching here: the actions CI runs, which hold a token on every push.

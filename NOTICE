@@ -1,0 +1,35 @@
+Medical ID Wallet
+Copyright (C) 2026 Daniele Gagliardi
+https://github.com/dpgagliardi/medical-id-wallet
+
+This program is free software, licensed under the GNU General Public License,
+version 3 or (at your option) any later version. See LICENSE for the full text.
+
+ADDITIONAL TERMS UNDER SECTION 7(b) OF THE GNU GPL VERSION 3
+
+Section 7(b) of the GNU GPL version 3 allows the copyright holder to require
+the preservation of reasonable author attributions. The following terms apply
+to this program and to every work based on it, starting with the version that
+first ships this file:
+
+1. You must keep this NOTICE file, and the copyright and licence notices at
+   the top of each source file, intact in every copy and every modified
+   version of the source code you convey.
+
+2. If a work based on this program, or containing a substantial part of it,
+   displays Appropriate Legal Notices (as defined in section 0 of the GNU GPL
+   version 3) or any "About", credits or licence screen, that screen must
+   include the following attribution, translated if the screen is:
+
+       Based on Medical ID Wallet by Daniele Gagliardi
+       https://github.com/dpgagliardi/medical-id-wallet
+
+These terms are in addition to, and do not replace, the obligations of the
+GNU GPL, including making the complete corresponding source code available to
+everyone who receives the program.
+
+A REQUEST, NOT A LICENCE CONDITION
+
+If you publish a work based on this program in an app store, please also
+mention the original project in its store description. It helps users find
+the upstream version and its security fixes.

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: GPL-3.0-or-later
+# Additional attribution terms (GPL-3.0 section 7(b)): see NOTICE.
 """Regenerate every launcher icon PNG and the monkey.jungle mapping.
 
 Each device in manifest.xml declares its own launcher icon size in the SDK's

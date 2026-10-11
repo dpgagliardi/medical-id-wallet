@@ -85,4 +85,6 @@ than an English fallback: say so in the pull request if that is what you did.
 ## Licence
 
 By contributing you agree that your work is distributed under the licence in
-[LICENSE](LICENSE).
+[LICENSE](LICENSE), together with the additional attribution terms in
+[NOTICE](NOTICE). New source files carry the same header as the existing
+ones, including the line pointing to NOTICE.

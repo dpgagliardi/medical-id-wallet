@@ -119,6 +119,11 @@ the platform this software runs on.
 
 Copyright (C) 2026 Daniele Gagliardi. GPL-3.0-or-later, see [LICENSE](LICENSE).
 
+Under section 7(b) of the GPL, [NOTICE](NOTICE) adds one requirement: keep the
+author attribution. Copies of the source keep NOTICE and the file headers, and
+a derived app that shows an About, credits or licence screen credits the
+original project there.
+
 Any modified version you distribute must stay under GPLv3, and its source must
 be made available to whoever receives it. For an application whose promise is
 that it never touches the network, a permissive licence would let someone ship

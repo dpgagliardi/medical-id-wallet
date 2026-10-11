@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (C) 2026 Daniele Gagliardi
 # SPDX-License-Identifier: GPL-3.0-or-later
+# Additional attribution terms (GPL-3.0 section 7(b)): see NOTICE.
 
 """Checks that need no Connect IQ SDK.
 
