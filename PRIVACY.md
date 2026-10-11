@@ -2,7 +2,7 @@
 
 **Developer:** Daniele Gagliardi
 **Contact:** dpgagliardi.dev@gmail.com
-**Last updated:** 3 October 2026
+**Last updated:** 11 October 2026
 
 ## The short version
 
