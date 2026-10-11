@@ -19,6 +19,10 @@ published, so their history starts at the 1.0.2 entry below.
   separate object. The encoder now keeps its data in byte arrays, producing
   identical codes in a fraction of the memory, and checks the memory actually
   free. When a QR still cannot be drawn, the screen now says so.
+- The QR is now built over a few timer ticks instead of inside a single
+  screen redraw, which on slower watches such as the Forerunner 55 tripped
+  the watchdog and closed the app. An empty panel of the final size shows
+  for a fraction of a second while it is built.
 
 ### Changed
 - Licence: added a NOTICE file with additional terms under section 7 of the
