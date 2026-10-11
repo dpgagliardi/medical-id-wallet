@@ -4,6 +4,7 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version. See LICENSE for details.
+// Additional terms (GPL-3.0 sections 7(b) and 7(c)): see NOTICE.
 
 import Toybox.Application;
 import Toybox.Lang;
