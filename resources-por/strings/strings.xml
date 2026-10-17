@@ -50,7 +50,9 @@
   <string id="docTypeQR">Seguro Saúde / QR Saúde Digital</string>
   <string id="docTypeGeneric">Code 39 (apenas códigos curtos)</string>
   <string id="barcodeTooLong">Muito longo para barras - use QR</string>
+  <!-- Machine translation, not yet reviewed by a native speaker -->
   <string id="barcodeUnsupportedChars">Caracteres inválidos para barras - use QR</string>
+  <!-- Machine translation, not yet reviewed by a native speaker -->
   <string id="barcodeQrNoMemory">QR indisponível neste relógio</string>
   <string id="pressStart">Pressione START</string>
 </strings>

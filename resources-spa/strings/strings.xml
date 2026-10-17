@@ -50,7 +50,9 @@
   <string id="docTypeQR">Seguro Médico / QR Salud</string>
   <string id="docTypeGeneric">Code 39 (solo códigos cortos)</string>
   <string id="barcodeTooLong">Muy largo para barras - usa QR</string>
+  <!-- Machine translation, not yet reviewed by a native speaker -->
   <string id="barcodeUnsupportedChars">Caracteres no válidos para barras - usa QR</string>
+  <!-- Machine translation, not yet reviewed by a native speaker -->
   <string id="barcodeQrNoMemory">QR no disponible en este reloj</string>
   <string id="pressStart">Pulsa START</string>
 </strings>
