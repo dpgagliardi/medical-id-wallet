@@ -50,7 +50,9 @@
   <string id="docTypeQR">Sağlık Sigortası / Dijital Sağlık QR</string>
   <string id="docTypeGeneric">Code 39 (yalnızca kısa kodlar)</string>
   <string id="barcodeTooLong">Çubuklar için çok uzun - QR kullanın</string>
+  <!-- Machine translation, not yet reviewed by a native speaker -->
   <string id="barcodeUnsupportedChars">Çubuklar için geçersiz karakter - QR kullanın</string>
+  <!-- Machine translation, not yet reviewed by a native speaker -->
   <string id="barcodeQrNoMemory">Bu saatte QR kullanılamıyor</string>
   <string id="pressStart">START'a basın</string>
 </strings>

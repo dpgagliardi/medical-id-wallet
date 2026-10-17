@@ -50,7 +50,9 @@
   <string id="docTypeQR">Helseforsikring / Digital Helse-QR</string>
   <string id="docTypeGeneric">Code 39 (kun korte koder)</string>
   <string id="barcodeTooLong">For langt for streker - bruk QR</string>
+  <!-- Machine translation, not yet reviewed by a native speaker -->
   <string id="barcodeUnsupportedChars">Tegn ikke gyldige for streker - bruk QR</string>
+  <!-- Machine translation, not yet reviewed by a native speaker -->
   <string id="barcodeQrNoMemory">QR er ikke tilgjengelig på denne klokken</string>
   <string id="pressStart">Trykk START</string>
 </strings>

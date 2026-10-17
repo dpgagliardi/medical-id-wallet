@@ -50,7 +50,9 @@
   <string id="docTypeQR">Zdravotní pojištění / Digitální Zdravotní QR</string>
   <string id="docTypeGeneric">Code 39 (pouze krátké kódy)</string>
   <string id="barcodeTooLong">Příliš dlouhé pro čárky - použijte QR</string>
+  <!-- Machine translation, not yet reviewed by a native speaker -->
   <string id="barcodeUnsupportedChars">Znaky nelze použít v čárkách - použijte QR</string>
+  <!-- Machine translation, not yet reviewed by a native speaker -->
   <string id="barcodeQrNoMemory">QR na těchto hodinkách není k dispozici</string>
   <string id="pressStart">Stiskněte START</string>
 </strings>

@@ -50,7 +50,9 @@
   <string id="docTypeQR">Ziektekostenverzekering / Digitale Gezondheids-QR</string>
   <string id="docTypeGeneric">Code 39 (alleen korte codes)</string>
   <string id="barcodeTooLong">Te lang voor streepjes - QR</string>
+  <!-- Machine translation, not yet reviewed by a native speaker -->
   <string id="barcodeUnsupportedChars">Ongeldige tekens voor streepjes - QR</string>
+  <!-- Machine translation, not yet reviewed by a native speaker -->
   <string id="barcodeQrNoMemory">QR niet beschikbaar op dit horloge</string>
   <string id="pressStart">Druk op START</string>
 </strings>

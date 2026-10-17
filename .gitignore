@@ -19,7 +19,6 @@ build/
 *~
 
 # Internal working docs: not for the public repo
-.claude/
 TEST_MATRIX.md
 new_icon_source.png
 
