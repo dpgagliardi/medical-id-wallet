@@ -50,7 +50,9 @@
   <string id="docTypeQR">Egészségbiztosítás / Digitális Egészség QR</string>
   <string id="docTypeGeneric">Code 39 (csak rövid kódok)</string>
   <string id="barcodeTooLong">Túl hosszú a vonalakhoz - QR</string>
+  <!-- Machine translation, not yet reviewed by a native speaker -->
   <string id="barcodeUnsupportedChars">Érvénytelen karakterek - QR</string>
+  <!-- Machine translation, not yet reviewed by a native speaker -->
   <string id="barcodeQrNoMemory">QR nem érhető el ezen az órán</string>
   <string id="pressStart">Nyomja meg: START</string>
 </strings>

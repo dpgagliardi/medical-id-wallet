@@ -50,7 +50,9 @@
   <string id="docTypeQR">医疗保险 / 数字健康 QR</string>
   <string id="docTypeGeneric">Code 39（仅限短代码）</string>
   <string id="barcodeTooLong">过长无法生成条码 - 请用二维码</string>
+  <!-- Machine translation, not yet reviewed by a native speaker -->
   <string id="barcodeUnsupportedChars">含条码不支持的字符 - 请用二维码</string>
+  <!-- Machine translation, not yet reviewed by a native speaker -->
   <string id="barcodeQrNoMemory">此手表不支持二维码</string>
   <string id="pressStart">按 START</string>
 </strings>
