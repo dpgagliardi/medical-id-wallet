@@ -55,4 +55,6 @@
   <!-- Machine translation, not yet reviewed by a native speaker -->
   <string id="barcodeQrNoMemory">QR no disponible en este reloj</string>
   <string id="pressStart">Pulsa START</string>
+  <string id="pressEnter">Pulsa Intro</string>
+  <string id="tapToOpen">Toca para abrir</string>
 </strings>

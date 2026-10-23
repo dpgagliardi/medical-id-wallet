@@ -8,6 +8,18 @@ here is the one in `manifest.xml`, which is what the Connect IQ Store publishes.
 Versions 1.0.1 and 1.0.2 were store iterations made before this repository was
 published, so their history starts at the 1.0.2 entry below.
 
+## [Unreleased]
+
+### Added
+- Edge cycling computers, for riders who leave the watch at home. The Edge
+  520, 520 Plus, 530, 820, 830, 1000, 1030, 1030 Plus, 1030 Bontrager and
+  Explore run the widget like the watches do. The Edge 540, 550, 840, 850,
+  1040, 1050, Explore 2 and MTB run only device apps, so they get a separate
+  device app built from the same code (`manifest-edge.xml`,
+  `monkey-edge.jungle`).
+- On an Edge, the cue that opens the full profile says to press Enter or tap
+  the screen: START there starts the activity timer.
+
 ## [1.1.1] - 2026-10-11
 
 ### Fixed

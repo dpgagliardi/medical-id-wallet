@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Additional terms (GPL-3.0 sections 7(b) and 7(c)): see NOTICE.
-"""Regenerate every launcher icon PNG and the monkey.jungle mapping.
+"""Regenerate every launcher icon PNG and the jungle mappings.
 
-Each device in manifest.xml declares its own launcher icon size in the SDK's
+Covers both builds: the widget (manifest.xml, monkey.jungle) and the Edge
+device app (manifest-edge.xml, monkey-edge.jungle). Each device declares its own launcher icon size in the SDK's
 compiler.json (22 distinct sizes, 26x26 to 70x70). A single PNG gets
 rescaled by the compiler, blurrily, so one PNG per size is rendered from the
 SVG masters instead. 1-bit devices get the mono master.
@@ -38,17 +39,24 @@ def render(svg, w, h, dest):
     os.remove(tmp)
 
 
+# (manifest, jungle) for each build
+BUILDS = [("manifest.xml", "monkey.jungle"),
+          ("manifest-edge.xml", "monkey-edge.jungle")]
+
+
 def main():
-    manifest = open("manifest.xml").read()
-    ids = re.findall(r'product id="([^"]+)"', manifest)
+    ids = {}
+    for manifest_path, jungle_path in BUILDS:
+        manifest = open(manifest_path).read()
+        ids[jungle_path] = re.findall(r'product id="([^"]+)"', manifest)
     groups = defaultdict(list)
-    for dev in ids:
+    for dev in sorted({d for devs in ids.values() for d in devs}):
         cfg = json.load(open(os.path.join(DEVICES, dev, "compiler.json")))
         icon = cfg["launcherIcon"]
         mono = cfg.get("bitsPerPixel") == 1
         groups[(icon["width"], icon["height"], mono)].append(dev)
 
-    lines = [BEGIN]
+    folders = {}
     for (w, h, mono), devs in sorted(groups.items()):
         name = f"{w}x{h}" + ("-mono" if mono else "")
         folder = os.path.join(OUT, name)
@@ -57,22 +65,27 @@ def main():
                w, h, os.path.join(folder, "launcher_icon.png"))
         with open(os.path.join(folder, "drawables.xml"), "w") as f:
             f.write(DRAWABLES)
-        for dev in sorted(devs):
-            lines.append(f"{dev}.resourcePath = $({dev}.resourcePath);{folder}")
-    lines.append(END)
+        for dev in devs:
+            folders[dev] = ((w, h, mono), folder)
 
     render("store/icon/icon.svg", *DEFAULT, "resources/drawables/launcher_icon.png")
     render("store/icon/icon.svg", 500, 500, "store/icon/icon-500.png")
 
-    jungle = open("monkey.jungle").read()
-    block = "\n".join(lines) + "\n"
-    if BEGIN in jungle:
-        jungle = re.sub(re.escape(BEGIN) + r".*?" + re.escape(END) + r"\n?",
-                        lambda _: block, jungle, flags=re.S)
-    else:
-        jungle = jungle.rstrip("\n") + "\n\n" + block
-    open("monkey.jungle", "w").write(jungle)
-    print(f"{len(ids)} devices, {len(groups)} icon sizes")
+    for jungle_path, devs in ids.items():
+        lines = [BEGIN]
+        for dev in sorted(devs, key=lambda d: (folders[d], d)):
+            lines.append(f"{dev}.resourcePath = $({dev}.resourcePath);{folders[dev][1]}")
+        lines.append(END)
+        jungle = open(jungle_path).read()
+        block = "\n".join(lines) + "\n"
+        if BEGIN in jungle:
+            jungle = re.sub(re.escape(BEGIN) + r".*?" + re.escape(END) + r"\n?",
+                            lambda _: block, jungle, flags=re.S)
+        else:
+            jungle = jungle.rstrip("\n") + "\n\n" + block
+        open(jungle_path, "w").write(jungle)
+        print(f"{jungle_path}: {len(devs)} devices")
+    print(f"{len(groups)} icon sizes")
 
 
 if __name__ == "__main__":

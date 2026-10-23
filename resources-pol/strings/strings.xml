@@ -55,4 +55,6 @@
   <!-- Machine translation, not yet reviewed by a native speaker -->
   <string id="barcodeQrNoMemory">QR niedostępny na tym zegarku</string>
   <string id="pressStart">Naciśnij START</string>
+  <string id="pressEnter">Naciśnij Enter</string>
+  <string id="tapToOpen">Dotknij, aby otworzyć</string>
 </strings>

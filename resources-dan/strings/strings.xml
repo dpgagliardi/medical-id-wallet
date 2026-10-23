@@ -55,4 +55,6 @@
   <!-- Machine translation, not yet reviewed by a native speaker -->
   <string id="barcodeQrNoMemory">QR ikke tilgængelig på dette ur</string>
   <string id="pressStart">Tryk på START</string>
+  <string id="pressEnter">Tryk på Enter</string>
+  <string id="tapToOpen">Tryk for at åbne</string>
 </strings>

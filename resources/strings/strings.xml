@@ -56,4 +56,6 @@
   <string id="barcodeUnsupportedChars">Characters not valid for bars - use QR</string>
   <string id="barcodeQrNoMemory">QR not available on this watch</string>
   <string id="pressStart">Press START</string>
+  <string id="pressEnter">Press Enter</string>
+  <string id="tapToOpen">Tap to open</string>
 </strings>

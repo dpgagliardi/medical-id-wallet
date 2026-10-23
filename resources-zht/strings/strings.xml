@@ -55,4 +55,6 @@
   <!-- Machine translation, not yet reviewed by a native speaker -->
   <string id="barcodeQrNoMemory">此手錶不支援 QR</string>
   <string id="pressStart">按 START</string>
+  <string id="pressEnter">按 Enter</string>
+  <string id="tapToOpen">輕觸以開啟</string>
 </strings>

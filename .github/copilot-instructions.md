@@ -7,6 +7,7 @@ Widget Garmin Connect IQ in Monkey C che mostra sull'orologio i dati medici di e
 - `resources/` e `resources-<lingua>/`: risorse e le 20 traduzioni di `strings/strings.xml`
 - `resources-launcher/`: icone del launcher per dimensione, generate da `store/icon/build_icons.py`
 - `manifest.xml`: versione pubblicata, dispositivi supportati, permessi (nessuno)
+- `manifest-edge.xml` e `monkey-edge.jungle`: device app per gli Edge che non accettano widget (540, 840, 1040 e successivi), stesso codice, ID app e scheda Store separati
 - `store/`: materiale per la scheda dello store
 
 ## Comandi
@@ -22,9 +23,10 @@ La CI non compila (l'SDK richiede di accettare la licenza Garmin a mano): esegue
 
 ## Build e firma
 - La chiave di firma è `medicalidwallet_key.der` nella radice (esclusa da git). È obbligatoria per i pacchetti Store (`-e`): Garmin rifiuta una versione firmata con un'altra chiave ("Controllo firma non riuscito"). Le chiavi `saferunner_*` sono legacy: non usarle.
-- Compila per più di un dispositivo prima di dire che una modifica funziona, almeno: `fr235` (sotto API 3.1.0, niente `Application.Properties` né `Storage`, e l'errore di simbolo non è catturabile), `fr55` e `instinct2` (widget da 64 KB, i più installati), `fr955_sim`.
+- Compila per più di un dispositivo prima di dire che una modifica funziona, almeno: `fr235` (sotto API 3.1.0, niente `Application.Properties` né `Storage`, e l'errore di simbolo non è catturabile), `fr55` e `instinct2` (widget da 64 KB, i più installati), `fr955_sim`, `edge530` (Edge vecchio, widget) e `edge1040` con `-f monkey-edge.jungle`.
+- Le differenze tra widget e device app Edge stanno nelle annotazioni `(:widgetApp)`/`(:deviceApp)` e `(:watchOpenHint)`/`(:edgeOpenHint)` escluse dai jungle. Le versioni dei due manifest restano uguali.
 - Nel simulatore la build si chiama sempre `medicalidwallet.prg`, mai `<dispositivo>.prg`: altrimenti l'App Settings Editor cerca `<DEVICE>-settings.json` e fallisce con "No settings file found", e si ripara solo cancellando `$TMPDIR/com.garmin.connectiq`. Per build per più dispositivi, una cartella ciascuno con lo stesso nome di file.
-- Dopo aver aggiunto un dispositivo al manifest o modificato le icone, esegui `python3 store/icon/build_icons.py` (serve `brew install librsvg imagemagick`). Lo script riscrive il blocco icone in `monkey.jungle`: non modificarlo a mano.
+- Dopo aver aggiunto un dispositivo al manifest o modificato le icone, esegui `python3 store/icon/build_icons.py` (serve `brew install librsvg imagemagick`). Lo script riscrive il blocco icone in `monkey.jungle` e `monkey-edge.jungle`: non modificarlo a mano.
 
 ## Regole del progetto
 - Nessuna richiesta di rete, mai: `manifest.xml` non dichiara permessi e così deve restare. È la promessa dell'app e il motivo della licenza GPL con i termini di NOTICE.

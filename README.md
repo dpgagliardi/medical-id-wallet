@@ -1,6 +1,6 @@
 # Medical ID Wallet
 
-A Garmin Connect IQ widget that stores your medical ID information (blood type, allergies, conditions, medications, emergency contacts) directly on your watch, viewable at any time without your phone.
+A Garmin Connect IQ widget that stores your medical ID information (blood type, allergies, conditions, medications, emergency contacts) directly on your watch or Edge cycling computer, viewable at any time without your phone.
 
 **Author:** [dpgagliardi](https://github.com/dpgagliardi)
 
@@ -30,7 +30,7 @@ All fields are optional. Fill in only what you're comfortable sharing.
 
 ## How to configure
 
-Open **Garmin Connect Mobile** → your device → **Widget Settings** → Medical ID Wallet, and fill in the fields you want to appear on the watch.
+Open **Garmin Connect Mobile** → your device → **Widget Settings** (or **App Settings** on Edge 540, 840, 1040 and later) → Medical ID Wallet, and fill in the fields you want to appear on the device.
 
 ## Privacy
 
@@ -63,7 +63,8 @@ EN · IT · DE · FR · ES · PT · NL · PL · SV · NO · DA · FI · RU · JA
 ## Requirements
 
 - Garmin Connect IQ 3.0+
-- Compatible with 136 Garmin devices (wrist-worn wearables)
+- Compatible with 136 Garmin watches and 10 Edge cycling computers (Edge 520, 520 Plus, 530, 820, 830, 1000, 1030, 1030 Plus, 1030 Bontrager, Explore) as a widget
+- Edge 540, 550, 840, 850, 1040, 1050, Explore 2 and MTB run only device apps, not widgets, so they get a separate device app built from the same code
 
 ## Build
 
@@ -76,6 +77,16 @@ java -jar "${SDK}/bin/monkeybrains.jar" \
   -o bin/medicalidwallet.prg \
   -f monkey.jungle -y your_developer_key.der \
   -d fr955_sim -l 0
+```
+
+The device app for the newer Edge computers builds from the same sources with
+its own jungle and manifest:
+
+```bash
+java -jar "${SDK}/bin/monkeybrains.jar" \
+  -o bin/edge/medicalidwallet.prg \
+  -f monkey-edge.jungle -y your_developer_key.der \
+  -d edge1040 -l 0
 ```
 
 The checks that run in CI run locally in a second, and need no SDK:

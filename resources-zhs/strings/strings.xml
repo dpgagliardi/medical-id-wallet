@@ -55,4 +55,6 @@
   <!-- Machine translation, not yet reviewed by a native speaker -->
   <string id="barcodeQrNoMemory">此手表不支持二维码</string>
   <string id="pressStart">按 START</string>
+  <string id="pressEnter">按 Enter</string>
+  <string id="tapToOpen">轻触以打开</string>
 </strings>

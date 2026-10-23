@@ -55,4 +55,6 @@
   <!-- Machine translation, not yet reviewed by a native speaker -->
   <string id="barcodeQrNoMemory">Bu saatte QR kullanılamıyor</string>
   <string id="pressStart">START'a basın</string>
+  <string id="pressEnter">Enter'a basın</string>
+  <string id="tapToOpen">Açmak için dokunun</string>
 </strings>

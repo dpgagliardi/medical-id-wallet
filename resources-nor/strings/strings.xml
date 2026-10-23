@@ -55,4 +55,6 @@
   <!-- Machine translation, not yet reviewed by a native speaker -->
   <string id="barcodeQrNoMemory">QR er ikke tilgjengelig på denne klokken</string>
   <string id="pressStart">Trykk START</string>
+  <string id="pressEnter">Trykk Enter</string>
+  <string id="tapToOpen">Trykk for å åpne</string>
 </strings>

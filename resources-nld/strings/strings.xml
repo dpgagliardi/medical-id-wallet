@@ -55,4 +55,6 @@
   <!-- Machine translation, not yet reviewed by a native speaker -->
   <string id="barcodeQrNoMemory">QR niet beschikbaar op dit horloge</string>
   <string id="pressStart">Druk op START</string>
+  <string id="pressEnter">Druk op Enter</string>
+  <string id="tapToOpen">Tik om te openen</string>
 </strings>

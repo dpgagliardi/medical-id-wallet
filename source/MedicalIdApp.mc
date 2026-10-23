@@ -44,11 +44,19 @@ class MedicalIdApp extends Application.AppBase {
         return [new MedicalIdView(m, restricted), new MedicalIdDelegate(m, restricted)];
     }
 
+    (:widgetApp)
     private function isBaseViewInputRestricted() as Boolean {
         var settings = System.getDeviceSettings();
         if (!(settings has :isGlanceModeEnabled)) { return true; }
         var enabled = settings.isGlanceModeEnabled;
         return !(enabled == true);
+    }
+
+    //! The Edge build (monkey-edge.jungle) is a device app: it owns every
+    //! button from launch, so the initial view is always the scrollable one.
+    (:deviceApp)
+    private function isBaseViewInputRestricted() as Boolean {
+        return false;
     }
 
     //! The glance builds nothing beyond its own view: it reads the single

@@ -97,17 +97,34 @@ class MedicalIdView extends WatchUi.View {
         dc.setColor(COLOR_BLACK, COLOR_BLACK);
         dc.fillRectangle(0, bandY, w, h - bandY);
 
-        // "START" is printed on the hardware, so it stays untranslated; the
-        // verb around it is localized. Longer languages (hu, fr) can outrun
-        // a narrow round screen, so fall back to the bare button name rather
-        // than let the cue run under the bezel.
+        var label = openHintLabel(dc, w);
+        dc.setColor(COLOR_GREY, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(w / 2, bandY + 4, Graphics.FONT_XTINY, label,
+                    Graphics.TEXT_JUSTIFY_CENTER);
+    }
+
+    //! "START" is printed on the hardware, so it stays untranslated; the
+    //! verb around it is localized. Longer languages (hu, fr) can outrun
+    //! a narrow round screen, so fall back to the bare button name rather
+    //! than let the cue run under the bezel.
+    (:watchOpenHint)
+    private function openHintLabel(dc as Dc, w as Number) as String {
         var label = WatchUi.loadResource(Rez.Strings.pressStart) as String;
         if (dc.getTextWidthInPixels(label, Graphics.FONT_XTINY) > w - 8) {
             label = "START";
         }
-        dc.setColor(COLOR_GREY, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(w / 2, bandY + 4, Graphics.FONT_XTINY, label,
-                    Graphics.TEXT_JUSTIFY_CENTER);
+        return label;
+    }
+
+    //! Edge computers (monkey.jungle swaps this variant in for them): START
+    //! starts the activity timer there, and SELECT is the Enter key on the
+    //! button-only models (Edge 520, 520 Plus, 530) or a tap on the others.
+    (:edgeOpenHint)
+    private function openHintLabel(dc as Dc, w as Number) as String {
+        if (System.getDeviceSettings().isTouchScreen) {
+            return WatchUi.loadResource(Rez.Strings.tapToOpen) as String;
+        }
+        return WatchUi.loadResource(Rez.Strings.pressEnter) as String;
     }
 
     // Gap between two fields in the compact layout.

@@ -55,4 +55,6 @@
   <!-- Machine translation, not yet reviewed by a native speaker -->
   <string id="barcodeQrNoMemory">QR ei käytettävissä tässä kellossa</string>
   <string id="pressStart">Paina START</string>
+  <string id="pressEnter">Paina Enter</string>
+  <string id="tapToOpen">Avaa napauttamalla</string>
 </strings>

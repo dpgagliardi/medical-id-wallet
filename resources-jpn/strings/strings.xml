@@ -55,4 +55,6 @@
   <!-- Machine translation, not yet reviewed by a native speaker -->
   <string id="barcodeQrNoMemory">この時計ではQRを使用できません</string>
   <string id="pressStart">STARTを押す</string>
+  <string id="pressEnter">Enterを押す</string>
+  <string id="tapToOpen">タップして開く</string>
 </strings>
