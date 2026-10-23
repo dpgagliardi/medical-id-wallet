@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Medical ID Wallet launcher icon for the Edge device app: the same ID
+       card as icon.svg, turned upright to echo the portrait screen of an
+       Edge. Same shape rules: nothing thinner than ~6 units, no cross and
+       no Star of Life. -->
+  <circle cx="50" cy="50" r="49" fill="#E0242B"/>
+  <rect x="27" y="15" width="46" height="70" rx="8" fill="#FFFFFF"/>
+  <path d="M50 54 C36 44 36 32 44 31 C47.5 30.5 50 33 50 35.5 C50 33 52.5 30.5 56 31 C64 32 64 44 50 54Z" fill="#E0242B"/>
+  <rect x="37" y="62" width="26" height="7" rx="3.5" fill="#E0242B"/>
+  <rect x="41" y="73" width="18" height="7" rx="3.5" fill="#E0242B"/>
+</svg>

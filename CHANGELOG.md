@@ -19,6 +19,8 @@ published, so their history starts at the 1.0.2 entry below.
   `monkey-edge.jungle`).
 - On an Edge, the cue that opens the full profile says to press Enter or tap
   the screen: START there starts the activity timer.
+- The Edge device app has its own launcher icon, with the ID card upright to
+  match the portrait screen of an Edge.
 
 ## [1.1.1] - 2026-10-11
 
