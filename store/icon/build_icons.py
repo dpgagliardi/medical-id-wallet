@@ -7,7 +7,9 @@ Covers both builds: the widget (manifest.xml, monkey.jungle) and the Edge
 device app (manifest-edge.xml, monkey-edge.jungle). Each device declares its own launcher icon size in the SDK's
 compiler.json (22 distinct sizes, 26x26 to 70x70). A single PNG gets
 rescaled by the compiler, blurrily, so one PNG per size is rendered from the
-SVG masters instead. 1-bit devices get the mono master.
+SVG masters instead. 1-bit devices get the mono master, and the Edge device
+app gets icon-edge.svg, the same card upright to match the Edge's portrait
+screen.
 
 Needs rsvg-convert and ImageMagick (brew install librsvg imagemagick).
 Run from the repository root after adding a device or editing an SVG.
@@ -39,42 +41,45 @@ def render(svg, w, h, dest):
     os.remove(tmp)
 
 
-# (manifest, jungle) for each build
-BUILDS = [("manifest.xml", "monkey.jungle"),
-          ("manifest-edge.xml", "monkey-edge.jungle")]
+# (manifest, jungle, colour master, folder suffix) for each build
+BUILDS = [("manifest.xml", "monkey.jungle", "store/icon/icon.svg", ""),
+          ("manifest-edge.xml", "monkey-edge.jungle", "store/icon/icon-edge.svg", "-edge")]
 
 
 def main():
     ids = {}
-    for manifest_path, jungle_path in BUILDS:
+    groups = defaultdict(list)
+    for manifest_path, jungle_path, svg, suffix in BUILDS:
         manifest = open(manifest_path).read()
         ids[jungle_path] = re.findall(r'product id="([^"]+)"', manifest)
-    groups = defaultdict(list)
-    for dev in sorted({d for devs in ids.values() for d in devs}):
-        cfg = json.load(open(os.path.join(DEVICES, dev, "compiler.json")))
-        icon = cfg["launcherIcon"]
-        mono = cfg.get("bitsPerPixel") == 1
-        groups[(icon["width"], icon["height"], mono)].append(dev)
+        for dev in ids[jungle_path]:
+            cfg = json.load(open(os.path.join(DEVICES, dev, "compiler.json")))
+            icon = cfg["launcherIcon"]
+            mono = cfg.get("bitsPerPixel") == 1
+            groups[(icon["width"], icon["height"], mono, svg, suffix)].append(
+                (jungle_path, dev))
 
     folders = {}
-    for (w, h, mono), devs in sorted(groups.items()):
-        name = f"{w}x{h}" + ("-mono" if mono else "")
+    for (w, h, mono, svg, suffix), devs in sorted(groups.items()):
+        name = f"{w}x{h}" + ("-mono" if mono else "") + suffix
         folder = os.path.join(OUT, name)
         os.makedirs(folder, exist_ok=True)
-        render("store/icon/icon-mono.svg" if mono else "store/icon/icon.svg",
+        render("store/icon/icon-mono.svg" if mono else svg,
                w, h, os.path.join(folder, "launcher_icon.png"))
         with open(os.path.join(folder, "drawables.xml"), "w") as f:
             f.write(DRAWABLES)
-        for dev in devs:
-            folders[dev] = ((w, h, mono), folder)
+        for jungle_path, dev in devs:
+            folders[(jungle_path, dev)] = ((w, h, mono), folder)
 
     render("store/icon/icon.svg", *DEFAULT, "resources/drawables/launcher_icon.png")
     render("store/icon/icon.svg", 500, 500, "store/icon/icon-500.png")
+    render("store/icon/icon-edge.svg", 500, 500, "store/icon/icon-edge-500.png")
 
     for jungle_path, devs in ids.items():
         lines = [BEGIN]
-        for dev in sorted(devs, key=lambda d: (folders[d], d)):
-            lines.append(f"{dev}.resourcePath = $({dev}.resourcePath);{folders[dev][1]}")
+        for dev in sorted(devs, key=lambda d: (folders[(jungle_path, d)], d)):
+            folder = folders[(jungle_path, dev)][1]
+            lines.append(f"{dev}.resourcePath = $({dev}.resourcePath);{folder}")
         lines.append(END)
         jungle = open(jungle_path).read()
         block = "\n".join(lines) + "\n"
