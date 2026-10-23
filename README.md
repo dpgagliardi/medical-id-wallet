@@ -1,6 +1,6 @@
 # Medical ID Wallet
 
-A Garmin Connect IQ widget that stores your medical ID information (blood type, allergies, conditions, medications, emergency contacts) directly on your watch or Edge cycling computer, viewable at any time without your phone.
+A Garmin Connect IQ widget (and, on the newer Edge cycling computers, a device app) that stores your medical ID information (blood type, allergies, conditions, medications, emergency contacts) directly on your watch or Edge cycling computer, viewable at any time without your phone.
 
 **Author:** [dpgagliardi](https://github.com/dpgagliardi)
 
@@ -36,15 +36,15 @@ Open **Garmin Connect Mobile** → your device → **Widget Settings** (or **App
 
 **100% offline. Zero network requests.** Medical ID Wallet never collects, transmits, or shares any of your information: nothing is sent to me or to any third party, and the app never touches the network.
 
-One honest caveat: you enter these fields in Garmin Connect Mobile, so the values are handled by Garmin's own apps and services on their way to the watch, under [Garmin's privacy policy](https://www.garmin.com/en-US/privacy/global/policy/) rather than ours. We can't see that and don't control it. Every field is optional, so leave blank anything you'd rather Garmin not hold.
+One honest caveat: you enter these fields in Garmin Connect Mobile, so the values are handled by Garmin's own apps and services on their way to the device, under [Garmin's privacy policy](https://www.garmin.com/en-US/privacy/global/policy/) rather than ours. We can't see that and don't control it. Every field is optional, so leave blank anything you'd rather Garmin not hold.
 
 Full [privacy policy](PRIVACY.md).
 
-**Before selling, gifting, or discarding your watch**, remember to reset it to factory settings (or clear the app's settings in Garmin Connect Mobile) to remove your personal and medical information from the device.
+**Before selling, gifting, or discarding your watch or Edge**, remember to reset it to factory settings (or clear the app's settings in Garmin Connect Mobile) to remove your personal and medical information from the device.
 
 ## Languages
 
-20 languages supported: the watch automatically uses the system language.
+20 languages supported: the app automatically uses the device's system language.
 EN · IT · DE · FR · ES · PT · NL · PL · SV · NO · DA · FI · RU · JA · KO · ZH-S · ZH-T · TR · CS · HU
 
 ## Navigation
@@ -122,9 +122,9 @@ project, in spare time.
 
 ## Trademarks
 
-Not affiliated with, endorsed by or sponsored by Garmin Ltd. Garmin, Connect IQ
-and Garmin Connect are trademarks of Garmin Ltd., named here only to identify
-the platform this software runs on.
+Not affiliated with, endorsed by or sponsored by Garmin Ltd. Garmin, Connect IQ,
+Garmin Connect and Edge are trademarks of Garmin Ltd., named here only to
+identify the platform and devices this software runs on.
 
 ## Licence
 
