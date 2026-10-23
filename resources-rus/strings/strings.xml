@@ -55,4 +55,6 @@
   <!-- Machine translation, not yet reviewed by a native speaker -->
   <string id="barcodeQrNoMemory">QR недоступен на этих часах</string>
   <string id="pressStart">Нажмите START</string>
+  <string id="pressEnter">Нажмите Enter</string>
+  <string id="tapToOpen">Коснитесь, чтобы открыть</string>
 </strings>

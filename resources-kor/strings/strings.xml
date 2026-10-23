@@ -55,4 +55,6 @@
   <!-- Machine translation, not yet reviewed by a native speaker -->
   <string id="barcodeQrNoMemory">이 시계에서는 QR을 사용할 수 없음</string>
   <string id="pressStart">START 누르기</string>
+  <string id="pressEnter">Enter 누르기</string>
+  <string id="tapToOpen">탭하여 열기</string>
 </strings>

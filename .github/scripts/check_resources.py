@@ -18,7 +18,8 @@ everything the compiler would not have caught anyway:
    running in English. Ids that are meant to stay in the default language go in
    `.github/untranslated.txt`, so "not translated yet" and "not translated on
    purpose" stay distinguishable.
-3. The version in manifest.xml matches the newest released entry in
+3. The version in manifest.xml (and in manifest-edge.xml, the Edge device app
+   built from the same sources) matches the newest released entry in
    CHANGELOG.md. This one is here because it is what actually went wrong: the
    two drifted apart twice without anything complaining.
 """
@@ -54,8 +55,12 @@ def ok(message: str) -> None:
     print(f"ok    {message}")
 
 
+# The widget and the Edge device app: same sources, one manifest each.
+MANIFESTS = ["manifest.xml", "manifest-edge.xml"]
+
+
 def check_xml_well_formed() -> None:
-    files = ["manifest.xml"] + sorted(glob.glob("resources*/**/*.xml", recursive=True))
+    files = MANIFESTS + sorted(glob.glob("resources*/**/*.xml", recursive=True))
     for path in files:
         try:
             ET.parse(path)
@@ -83,7 +88,7 @@ def check_strings() -> None:
     sources = (
         glob.glob("source/**/*.mc", recursive=True)
         + glob.glob("resources*/**/*.xml", recursive=True)
-        + ["manifest.xml"]
+        + MANIFESTS
     )
     for path in sources:
         if path == default:
@@ -123,14 +128,6 @@ def check_strings() -> None:
 
 
 def check_version() -> None:
-    with open("manifest.xml", encoding="utf-8") as handle:
-        manifest = handle.read()
-    match = re.search(r"<iq:application\b[^>]*\bversion=\"([^\"]+)\"", manifest, re.S)
-    if not match:
-        fail("manifest.xml has no version attribute on <iq:application>")
-        return
-    manifest_version = match.group(1)
-
     with open("CHANGELOG.md", encoding="utf-8") as handle:
         headings = re.findall(r"^## \[([^\]]+)\]", handle.read(), re.M)
     released = [h for h in headings if h.lower() != "unreleased"]
@@ -138,13 +135,21 @@ def check_version() -> None:
         fail("CHANGELOG.md has no released version heading")
         return
 
-    if manifest_version != released[0]:
-        fail(
-            f"manifest.xml is at {manifest_version}, "
-            f"the newest released CHANGELOG entry is {released[0]}"
-        )
-    else:
-        ok(f"manifest.xml and CHANGELOG.md agree on {manifest_version}")
+    for path in MANIFESTS:
+        with open(path, encoding="utf-8") as handle:
+            manifest = handle.read()
+        match = re.search(r"<iq:application\b[^>]*\bversion=\"([^\"]+)\"", manifest, re.S)
+        if not match:
+            fail(f"{path} has no version attribute on <iq:application>")
+            continue
+        manifest_version = match.group(1)
+        if manifest_version != released[0]:
+            fail(
+                f"{path} is at {manifest_version}, "
+                f"the newest released CHANGELOG entry is {released[0]}"
+            )
+        else:
+            ok(f"{path} and CHANGELOG.md agree on {manifest_version}")
 
 
 def main() -> int:

@@ -2,11 +2,13 @@
 
 **Developer:** Daniele Gagliardi
 **Contact:** dpgagliardi.dev@gmail.com
-**Last updated:** 11 October 2026
+**Last updated:** 23 October 2026
 
 ## The short version
 
-Medical ID Wallet runs entirely on your Garmin device. The app makes no network requests and transmits nothing to any server, ours or a third party's: we never receive your data and have no way to see it. Note that you enter that data through Garmin Connect Mobile, so it is handled by Garmin's own apps and services on its way to your watch. See [Garmin's role](#garmins-role) below.
+This policy covers Medical ID Wallet in both its forms on the Connect IQ Store: the widget for Garmin watches and older Edge cycling computers, and the device app for the newer Edge computers. Both are built from the same code and handle your data in exactly the same way.
+
+Medical ID Wallet runs entirely on your Garmin device. The app makes no network requests and transmits nothing to any server, ours or a third party's: we never receive your data and have no way to see it. Note that you enter that data through Garmin Connect Mobile, so it is handled by Garmin's own apps and services on its way to your device. See [Garmin's role](#garmins-role) below.
 
 ## What data the user enters
 
@@ -21,21 +23,21 @@ All information shown by Medical ID Wallet is entered voluntarily by the user th
 - Organ donor status
 - An optional value used to generate the barcode
 
-This is sensitive personal and health information. Enter it knowingly, understanding it will be displayed on screen, including to whoever is helping you, every time the widget is opened on your watch.
+This is sensitive personal and health information. Enter it knowingly, understanding it will be displayed on screen, including to whoever is helping you, every time the app is opened on your watch or Edge.
 
 ## Where this data is stored
 
-All fields are saved through Garmin Connect IQ's standard Properties mechanism, on the Garmin device's own storage. Sync between your watch and the Garmin Connect Mobile app on your phone happens over the already-encrypted Bluetooth or ANT+ channel managed by the Garmin ecosystem you have already chosen to use. Medical ID Wallet introduces no transmission channel of its own.
+All fields are saved through Garmin Connect IQ's standard Properties mechanism, on the Garmin device's own storage. Sync between your device and the Garmin Connect Mobile app on your phone happens over the already-encrypted Bluetooth or ANT+ channel managed by the Garmin ecosystem you have already chosen to use. Medical ID Wallet introduces no transmission channel of its own.
 
 ## Garmin's role
 
-We want to be straight about the part we don't control. You fill these fields in inside Garmin Connect Mobile, which is Garmin's app, tied to your Garmin account. The values therefore pass through Garmin's software, and, to the extent Garmin's own settings sync keeps a copy, through Garmin's systems, before and after they reach your watch. What Garmin does with them is governed by [Garmin's privacy policy](https://www.garmin.com/en-US/privacy/global/policy/), not by this one. We have no visibility into it and no control over it.
+We want to be straight about the part we don't control. You fill these fields in inside Garmin Connect Mobile, which is Garmin's app, tied to your Garmin account. The values therefore pass through Garmin's software, and, to the extent Garmin's own settings sync keeps a copy, through Garmin's systems, before and after they reach your device. What Garmin does with them is governed by [Garmin's privacy policy](https://www.garmin.com/en-US/privacy/global/policy/), not by this one. We have no visibility into it and no control over it.
 
 So the accurate statement is not "nobody but you can ever see this". It is: we never receive your data, and the app itself sends it nowhere. If a field is sensitive enough that Garmin holding it would trouble you, leave that field empty. Every field is optional.
 
 ## What the app does with this data
 
-The app reads the saved settings and displays them on screen while the widget is in use, including local generation of a scannable barcode (QR code or Code 39, your choice) from your ID. All processing happens exclusively on device, in real time.
+The app reads the saved settings and displays them on screen while the app is in use, including local generation of a scannable barcode (QR code or Code 39, your choice) from your ID. All processing happens exclusively on device, in real time.
 
 ## What the app does not do
 
@@ -47,9 +49,9 @@ The app reads the saved settings and displays them on screen while the widget is
 
 ## Visibility of data on screen
 
-By its very nature, a medical ID widget is designed to be readable by anyone providing assistance, not just the device owner. Anyone with physical access to your watch can open the widget and see the information you have configured, including the scannable barcode. Only configure the fields you want visible in this way.
+By its very nature, a medical ID app is designed to be readable by anyone providing assistance, not just the device owner. Anyone with physical access to your watch or Edge can open the app and see the information you have configured, including the scannable barcode. Only configure the fields you want visible in this way.
 
-**Before selling or giving away your watch:** since all your medical and personal information is stored directly on the device, remember to reset your watch to factory settings, or clear the app's settings from Garmin Connect Mobile, before selling, gifting or discarding it, so your data doesn't stay accessible to the next owner.
+**Before selling or giving away your watch or Edge:** since all your medical and personal information is stored directly on the device, remember to reset the device to factory settings, or clear the app's settings from Garmin Connect Mobile, before selling, gifting or discarding it, so your data doesn't stay accessible to the next owner.
 
 ## Not a medical device
 
@@ -61,7 +63,7 @@ Any change is made in this file, so its full history is visible in the repositor
 
 ## Trademarks
 
-Not affiliated with, endorsed by or sponsored by Garmin Ltd. Garmin and Connect IQ are trademarks of Garmin Ltd.
+Not affiliated with, endorsed by or sponsored by Garmin Ltd. Garmin, Connect IQ and Edge are trademarks of Garmin Ltd.
 
 ## Contact
 

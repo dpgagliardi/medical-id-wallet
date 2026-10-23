@@ -52,9 +52,22 @@ java -jar "${SDK}/bin/monkeybrains.jar" \
   -d fr955_sim -l 0
 ```
 
+The device app for the newer Edge computers builds from the same sources with
+its own jungle and manifest:
+
+```bash
+java -jar "${SDK}/bin/monkeybrains.jar" \
+  -o bin/edge/medicalidwallet.prg \
+  -f monkey-edge.jungle -y your_developer_key.der \
+  -d edge1040 -l 0
+```
+
 Build for more than one device before opening a pull request. The faults that
 get through are the device-specific ones: an older target such as `fr235` sits
-below API 3.1.0 and does not have `Application.Properties` at all.
+below API 3.1.0 and does not have `Application.Properties` at all. A change
+to the view or the input handling also needs an Edge build of each kind: an
+older Edge such as `edge530` through `monkey.jungle`, and `edge1040` through
+`monkey-edge.jungle`.
 
 CI cannot compile, because the SDK needs Garmin's licence accepted
 interactively. What it does check runs locally too, and takes a second:

@@ -55,4 +55,6 @@
   <!-- Machine translation, not yet reviewed by a native speaker -->
   <string id="barcodeQrNoMemory">QR na těchto hodinkách není k dispozici</string>
   <string id="pressStart">Stiskněte START</string>
+  <string id="pressEnter">Stiskněte Enter</string>
+  <string id="tapToOpen">Klepnutím otevřete</string>
 </strings>
